@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot", "FinBot\FinBot.csproj", "{40E93081-08E6-4113-854E-92B9E378DFA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.WebApi", "FinBot\FinBot.WebApi.csproj", "{40E93081-08E6-4113-854E-92B9E378DFA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{DA5221E3-8C64-42BD-9809-63B7162D977E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.Domain", "FinBot.Domain\FinBot.Domain.csproj", "{9B2086B6-3EDA-4052-B571-2691BF350707}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.App", "FinBot.App\FinBot.App.csproj", "{4EA4301D-3A7A-4953-84C0-C890104D123F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastucture", "Infrastucture", "{63757058-4062-4C9B-BC98-DB33F006BA57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.DB", "FinBot.DB\FinBot.DB.csproj", "{E7DA1657-2A27-406A-BBAE-3E4DE10EC633}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +25,26 @@ Global
 		{40E93081-08E6-4113-854E-92B9E378DFA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40E93081-08E6-4113-854E-92B9E378DFA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40E93081-08E6-4113-854E-92B9E378DFA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B2086B6-3EDA-4052-B571-2691BF350707}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B2086B6-3EDA-4052-B571-2691BF350707}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B2086B6-3EDA-4052-B571-2691BF350707}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B2086B6-3EDA-4052-B571-2691BF350707}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EA4301D-3A7A-4953-84C0-C890104D123F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA4301D-3A7A-4953-84C0-C890104D123F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EA4301D-3A7A-4953-84C0-C890104D123F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA4301D-3A7A-4953-84C0-C890104D123F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9B2086B6-3EDA-4052-B571-2691BF350707} = {DA5221E3-8C64-42BD-9809-63B7162D977E}
+		{4EA4301D-3A7A-4953-84C0-C890104D123F} = {DA5221E3-8C64-42BD-9809-63B7162D977E}
+		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633} = {63757058-4062-4C9B-BC98-DB33F006BA57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1AAAD6DA-E4B7-49C4-9B67-CFAEA1E048FF}
