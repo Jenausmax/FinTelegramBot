@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace FinBot.Domain.Interfaces
 {
-    interface ICommandBot
+    public interface ICommandBot
     {
+        string Command { get; set; }
+        void SetCommandBot(string command);
     }
 }
