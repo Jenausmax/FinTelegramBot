@@ -9,17 +9,17 @@ using Telegram.Bot.Types;
 
 namespace FinBot.WebApi.Controllers
 {
-    [Route("api/Telegram")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UpdateController : ControllerBase
     {
-        private readonly IUpdateService _updateService;
+        private readonly IResponderBot _responderService;
 
         private Update _update;
 
-        public UpdateController(IUpdateService updateService)
+        public UpdateController(IResponderBot responderService)
         {
-            _updateService = updateService;
+            _responderService = responderService;
         }
 
         [HttpPost]
@@ -31,16 +31,16 @@ namespace FinBot.WebApi.Controllers
             }
 
             _update = update;
-            update.Message.Text = update.Message.Text.Replace("", "");
+            _responderService.SetUpdateBot(_update);
+            update.Message.Text = update.Message.Text.Replace("@BotMy", "");
+
+            if (update.Message.Text == "Привет!")
+            {
+
+            }
+
 
             return Ok();
         }
-
-        private async void Responder(string newMessage)
-        {
-            _update.Message.Text = newMessage;
-            await _updateService.EchoAsync(_update);
-        }
-
     }
 }
