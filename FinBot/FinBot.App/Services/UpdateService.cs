@@ -25,10 +25,11 @@ namespace FinBot.App.Services
                 return;
             }
 
-            var message = update.Message;
-
-            await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
-
+            if (update.Message != null)
+            {
+                var message = update.Message;
+                await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
+            }
         }
     }
 }

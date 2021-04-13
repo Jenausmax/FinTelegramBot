@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
@@ -27,16 +24,17 @@ namespace FinBot.WebApi.Controllers
         {
             if (update.Message == null || update.Message.Text == null)
             {
-                return Ok();
+                return NotFound();
             }
+
 
             _update = update;
             _responderService.SetUpdateBot(_update);
-            update.Message.Text = update.Message.Text.Replace("@BotMy", "");
+            //update.Message.Text = update.Message.Text.Replace("@BotMy", "");
 
-            if (update.Message.Text == "Привет!")
+            if (update.Message.Text == "/start")
             {
-
+                _responderService.ResponderAsync("Я БотЁ");
             }
 
 

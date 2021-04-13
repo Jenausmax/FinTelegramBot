@@ -28,6 +28,7 @@ namespace FinBot
         {
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
+            services.AddScoped<IResponderBot, ResponderBotService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
 
 
