@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FinBot.App.Services
 {
@@ -28,7 +29,17 @@ namespace FinBot.App.Services
             if (update.Message != null)
             {
                 var message = update.Message;
-                await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
+                await _botService.Client.SendTextMessageAsync(message.Chat.Id,
+                    message.Text,
+                    parseMode: default,
+                    disableWebPagePreview: false,
+                    disableNotification: false,
+                    replyToMessageId: 0,
+                    new ReplyKeyboardMarkup(new List<KeyboardButton>()
+                    {
+                        new KeyboardButton("Привет!"),
+                        new KeyboardButton("Пока!")
+                    }));
             }
         }
     }
