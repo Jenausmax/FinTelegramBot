@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,10 @@ namespace FinBot.App.Services
             {
                 return;
             }
-
+            var key = new InlineKeyboardButton();
+            var key2 = new InlineKeyboardButton().Text = "Пока!";
+            key.Text = "sdf";
+            key.CallbackData = "Lucky";
             if (update.Message != null)
             {
                 var message = update.Message;
@@ -34,12 +38,18 @@ namespace FinBot.App.Services
                     parseMode: default,
                     disableWebPagePreview: false,
                     disableNotification: false,
-                    replyToMessageId: 0,
-                    new ReplyKeyboardMarkup(new List<KeyboardButton>()
-                    {
-                        new KeyboardButton("Привет!"),
-                        new KeyboardButton("Пока!")
-                    }));
+                    replyToMessageId: 0, 
+                    new InlineKeyboardMarkup(new List<InlineKeyboardButton>()
+                        {
+                            key,
+                            key2
+                        }
+                        ));
+                //new ReplyKeyboardMarkup(new List<KeyboardButton>()
+                //{
+                //    new KeyboardButton("Привет!"),
+                //    new KeyboardButton("Пока!")
+                //}));
             }
         }
     }
