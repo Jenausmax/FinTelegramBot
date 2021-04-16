@@ -23,45 +23,8 @@ namespace FinBot.WebApi.Controllers
         public async Task<IActionResult> Post([FromBody] Update update)
         {
             _update = update;
-            _responderService.SetUpdateBot(_update);
+            //_responderService.SetUpdateBot(_update);
 
-
-            if (update.Message == null)
-            {
-                if (update.CallbackQuery.Data == "Lucky")
-                {
-                    _responderService.ResponderAsync("Я понял!");
-                }
-            }
-
-            if (update.Message.Text == "/start")
-            {
-                _responderService.ResponderAsync("Я БотЁ");
-            }
-
-
-
-
-
-
-
-            //if (update.Message == null || update.Message.Text == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //if (update.CallbackQuery.Data != null)
-            //{
-            //    _responderService.ResponderAsync("aaff");
-            //}
-
-           
-            ////update.Message.Text = update.Message.Text.Replace("@BotMy", "");
-
-            //if (update.Message.Text == "/start" || update.CallbackQuery.Data == "Lucky")
-            //{
-            //    _responderService.ResponderAsync("Я БотЁ");
-            //}
 
 
             return Ok();

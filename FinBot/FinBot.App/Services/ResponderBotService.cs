@@ -5,28 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FinBot.App.Services
 {
     public class ResponderBotService : IResponderBot
     {
         private readonly IUpdateService _updateService;
-        private Update _update;
 
         public ResponderBotService(IUpdateService service)
         {
             _updateService = service;
         }
 
-        public async void ResponderAsync(string newMessage)
+        public async void ResponderMessageAsync(Update update, string message, InlineKeyboardMarkup keyboard = default)
         {
-            _update.Message.Text = newMessage;
-            await _updateService.EchoAsync(_update);
+            update.Message.Text = message;
+            ResponderAsync(update);
         }
 
-        public void SetUpdateBot(Update update)
+        public void ResponderCallBackAsync(Update update, string message, InlineKeyboardMarkup keyboard = default)
         {
-            _update = update;
+            throw new NotImplementedException();
+        }
+
+        private async void ResponderAsync(Update update)
+        {
+            await _updateService.EchoTextMessageAsync(update, "asretg");
         }
     }
 }
