@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace FinBot.App.Services
 {
@@ -13,13 +14,22 @@ namespace FinBot.App.Services
         private Update _update;
         public void SetUpdateBot(Update update)
         {
-            update = _update;
+            _update = update;
         }
 
-        public string Command { get; set; }
-        public void SetCommandBot(string command)
+        public async void SetCommandBot(Telegram.Bot.Types.Enums.UpdateType type)
         {
-            throw new NotImplementedException();
+            switch (type)
+            {
+                case UpdateType.Message:
+                    break;
+
+                case UpdateType.CallbackQuery:
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

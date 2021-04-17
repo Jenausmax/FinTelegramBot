@@ -10,23 +10,18 @@ namespace FinBot.WebApi.Controllers
     [ApiController]
     public class UpdateController : ControllerBase
     {
-        private readonly IResponderBot _responderService;
+        private readonly ICommandBot _commandBot;
 
-        private Update _update;
-
-        public UpdateController(IResponderBot responderService)
+        public UpdateController(ICommandBot commandServiceBot)
         {
-            _responderService = responderService;
+            _commandBot = commandServiceBot;
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Update update)
         {
-            _update = update;
-            //_responderService.SetUpdateBot(_update);
-
-
-
+            _commandBot.SetUpdateBot(update);
+            _commandBot.SetCommandBot(update.Type);
             return Ok();
         }
     }

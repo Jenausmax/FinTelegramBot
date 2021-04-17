@@ -10,7 +10,6 @@ namespace FinBot.Domain.Interfaces
     public interface ICommandBot
     {
         void SetUpdateBot(Update update);
-        string Command { get; set; }
-        void SetCommandBot(string command);
+        void SetCommandBot(Telegram.Bot.Types.Enums.UpdateType types);
     }
 }
