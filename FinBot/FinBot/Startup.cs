@@ -30,6 +30,7 @@ namespace FinBot
             services.AddSingleton<IBotService, BotService>();
             services.AddScoped<IResponderBot, ResponderBotService>();
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
+            services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
 
 

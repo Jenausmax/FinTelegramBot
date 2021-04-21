@@ -9,6 +9,6 @@ namespace FinBot.Domain.Interfaces
 {
     public interface IKeyboardBotCreate
     {
-        InlineKeyboardMarkup CreateInlineKeyboard(IList<string> keyCollection);
+        InlineKeyboardMarkup CreateInlineKeyboard(string callBack = default, string key = default, IList<string> keyCollection = default);
     }
 }
