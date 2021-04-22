@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinBot.App.Keyboard;
+﻿using System.Collections.Generic;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
