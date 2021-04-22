@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FinBot.Domain.Models;
 
 namespace FinBot.Domain.Interfaces
@@ -11,7 +7,7 @@ namespace FinBot.Domain.Interfaces
     {
         void Create(Category category);
         void Delete(int id);
-        void Edit(int id);
-        Category GetCategory();
+        void Edit(Category category);
+        List<Category> GetCategoryView(CategoryView view);
     }
 }

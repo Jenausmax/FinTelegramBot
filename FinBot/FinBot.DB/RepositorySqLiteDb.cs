@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 
@@ -16,12 +17,13 @@ namespace FinBot.DB
             throw new NotImplementedException();
         }
 
-        public void Edit(int id)
+        public void Edit(Category category)
         {
             throw new NotImplementedException();
         }
 
-        public Category GetCategory()
+
+        public List<Category> GetCategoryView(CategoryView view)
         {
             throw new NotImplementedException();
         }

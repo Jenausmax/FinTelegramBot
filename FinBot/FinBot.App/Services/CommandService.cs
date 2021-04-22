@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -37,6 +38,7 @@ namespace FinBot.App.Services
                     break;
 
                 default:
+                    //TODO Доделать ответ на неправильный запрос
                     break;
             }
         }
@@ -51,11 +53,27 @@ namespace FinBot.App.Services
                 case "/start":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        "Привет я Бот и твой помошник!",
+                        BotPhrases.Start,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: Start()));
+                            keyCollection: AllCommandMenu()));
+                    break;
+
+                //TODO Обдумать а нужно ли это командное меню
+                case "/income":
+                    break;
+
+
+                case "/consumption":
+                    break;
+
+
+                case "/balance":
+                    break;
+
+
+                default:
                     break;
             }
         }
@@ -65,31 +83,121 @@ namespace FinBot.App.Services
             var callbackData = update.CallbackQuery.Data;
             switch (callbackData)
             {
-                case "Помощь":
-                    var help = "Мне можно отправлять свои траты.";
+                #region Submenu Home
+                //подменю старт
+                case "Help":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        help,
+                        BotPhrases.Help,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             keyCollection: default,
                             key: Back()));
                     break;
+
+                case "Setting":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.Start,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: SettingMenu()));
+                    break;
+
+                #endregion
+
+                #region Submenu Setting
+
+                case "Add category":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.Start,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: AddSettingMenu()));
+                    break;
+                case "Remove category":
+                    break;
+                #endregion
+
+                #region Submenu Add Category
+
+                //подменю Add Category
+                case "Income Setting":
+                    break;
+
+                case "Consumption Setting":
+                    break;
+
+                #endregion
+
+                #region All Menu
+
+                //основное меню
+                case "Home":
+                    break;
+                case "Income":
+                    break;
+                case "Consumption":
+                    break;
+                case "Balance":
+                    break;
+                #endregion
+
+                case "<---Back Home":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.Start,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: AllCommandMenu()));
+                    break;
             }
         }
 
-        private List<string> Start() //Командная клавиатура
+
+        /// <summary>
+        /// Полное командное меню для чата.
+        /// </summary>
+        /// <returns></returns>
+        private List<string> AllCommandMenu() //Командная клавиатура
         {
             var start = new List<string>()
             {
-                "Настройка",
-                "Помощь"
+                "Home",
+                "Income",
+                "Consumption",
+                "Balance"
             };
             return start;
         }
 
-        private string Back()
+
+        private List<string> SettingMenu() //Setting клавиатура
         {
-            return " <---Назад";
+            var start = new List<string>()
+            {
+                "Add category",
+                "Remove category"
+            };
+            return start;
+        }
+
+        private List<string> AddSettingMenu() //Add Setting клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Income Setting",
+                "Consumption Setting"
+            };
+            return start;
+        }
+
+        private string Back() //button back
+        {
+            return " <---Back Home";
         }
 
     }
