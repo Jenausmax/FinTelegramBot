@@ -8,12 +8,19 @@ namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
+        private IRepositoryDb _db;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
 
-        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService)
+        private static bool _flagIncome = false;
+        private static bool _flagConsumption = false;
+        private static bool _incomeSetting = false;
+        private static bool _consumptionSetting = false;
+
+        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IRepositoryDb db)
         {
+            _db = db;
             _keyboardBotCreate = keyboardBotCreate;
             _updateService = updateService;
         }
@@ -74,6 +81,7 @@ namespace FinBot.App.Services
 
 
                 default:
+                    ParseInputText(message);
                     break;
             }
         }
@@ -84,7 +92,7 @@ namespace FinBot.App.Services
             switch (callbackData)
             {
                 #region Submenu Home
-                //подменю старт
+                //подменю Home
                 case "Help":
                     await _updateService.EchoTextMessageAsync(
                         update,
@@ -111,7 +119,7 @@ namespace FinBot.App.Services
                 case "Add category":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        BotPhrases.Start,
+                        BotPhrases.AddSettingMenu,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
@@ -125,9 +133,19 @@ namespace FinBot.App.Services
 
                 //подменю Add Category
                 case "Income Setting":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        InputCategory(),
+                        keyboard: null);
+                    _incomeSetting = true;
                     break;
 
                 case "Consumption Setting":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        InputCategory(),
+                        keyboard: null);
+                    _consumptionSetting = true;
                     break;
 
                 #endregion
@@ -136,6 +154,13 @@ namespace FinBot.App.Services
 
                 //основное меню
                 case "Home":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.HomeMenu,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: HomeMenu()));
                     break;
                 case "Income":
                     break;
@@ -195,9 +220,51 @@ namespace FinBot.App.Services
             return start;
         }
 
+        private List<string> HomeMenu() //Add Setting клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Setting",
+                "Help"
+            };
+            return start;
+        }
+
         private string Back() //button back
         {
             return " <---Back Home";
+        }
+
+        private string InputCategory() => "Введите название категории: ";
+
+        private void ParseInputText(string text)
+        {
+
+
+            if (_incomeSetting)
+            {
+                _db.CreateCategory(text, true);
+                _incomeSetting = false;
+            }
+
+            if (_consumptionSetting)
+            {
+                _db.CreateCategory(text, false);
+                _consumptionSetting = false;
+            }
+        }
+
+        private void ParseInputMoney(int idCategory, string money)
+        {
+            if (_flagIncome)
+            {
+                _flagIncome = false;
+            }
+
+            if (_incomeSetting)
+            {
+                _flagIncome = false;
+            }
         }
 
     }

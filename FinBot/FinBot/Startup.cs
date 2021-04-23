@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinBot.App.Services;
+using FinBot.DB;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 
@@ -28,7 +29,7 @@ namespace FinBot
         {
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddScoped<IResponderBot, ResponderBotService>();
+            services.AddScoped<IRepositoryDb, RepositorySqLiteDb>();
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
