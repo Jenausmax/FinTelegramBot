@@ -239,8 +239,6 @@ namespace FinBot.App.Services
 
         private void ParseInputText(string text)
         {
-
-
             if (_incomeSetting)
             {
                 _db.CreateCategory(text, true);
@@ -261,9 +259,9 @@ namespace FinBot.App.Services
                 _flagIncome = false;
             }
 
-            if (_incomeSetting)
+            if (_flagConsumption)
             {
-                _flagIncome = false;
+                _flagConsumption = false;
             }
         }
 

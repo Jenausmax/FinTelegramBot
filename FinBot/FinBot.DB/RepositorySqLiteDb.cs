@@ -20,14 +20,7 @@ namespace FinBot.DB
         public bool CreateCategory(string nameCategory, bool role)
         {
             int intRole;
-            if (role)
-            {
-                intRole = 1;
-            }
-            else
-            {
-                intRole = 0;
-            }
+            intRole = role ? 1 : 0;
             var category = new Category() { Name = nameCategory, Role = role };
             using (var connection = new SqliteConnection(CONNECTIONSTRING))
             {
@@ -36,9 +29,6 @@ namespace FinBot.DB
                 var command = new SqliteCommand();
                 command.Connection = connection;
                 command.CommandText = $"INSERT INTO Categories (Name, Role) VALUES ('{category.Name}', {intRole})";
-                int number = command.ExecuteNonQuery();
-
-
 
                 connection.Close();
                 return true;
