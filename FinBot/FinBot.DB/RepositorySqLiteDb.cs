@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 
 namespace FinBot.DB
 {
-    public class RepositorySqLiteDb : IRepositoryDb
+    public class RepositorySqLiteDb : IBaseRepositoryDb
     {
         private const string CONNECTIONSTRING = "Data Source=MyFin.db;Cache=Shared;";
 
@@ -35,6 +35,15 @@ namespace FinBot.DB
             }
         }
 
+        public bool DeleteCategory(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EditCategory(Category category)
+        {
+            throw new NotImplementedException();
+        }
 
 
         public bool CreateIncome(int idCategory, Income income)
@@ -57,6 +66,21 @@ namespace FinBot.DB
             return false;
         }
 
+        public bool DeleteIncome(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EditIncome(Income income)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Income> GetCollectionIncomes()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CreateConsumption(int idCategory, Consumption consumption)
         {
             if (consumption != null)
@@ -77,17 +101,20 @@ namespace FinBot.DB
             return false;
         }
 
-        public bool Delete<T>(T model, int id)
+        public bool DeleteConsumption(int id)
         {
             throw new NotImplementedException();
         }
 
-        public bool Edit<T>(T model)
+        public bool EditConsumption(Consumption consumption)
         {
             throw new NotImplementedException();
         }
 
-
+        public List<Consumption> GetCollectionConsumptions()
+        {
+            throw new NotImplementedException();
+        }
 
 
         public List<Category> GetCollectionCategories()
@@ -130,7 +157,10 @@ namespace FinBot.DB
             return categories;
         }
 
-
+        public Category GetCategory()
+        {
+            throw new NotImplementedException();
+        }
 
 
         public Dictionary<Category, Consumption> GetCollectionOneCategoryConsumptions(Category category)

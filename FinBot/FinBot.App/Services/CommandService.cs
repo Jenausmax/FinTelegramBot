@@ -8,7 +8,7 @@ namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
-        private IRepositoryDb _db;
+        private IBaseRepositoryDb _db;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
@@ -18,7 +18,7 @@ namespace FinBot.App.Services
         private static bool _incomeSetting = false;
         private static bool _consumptionSetting = false;
 
-        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IRepositoryDb db)
+        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb db)
         {
             _db = db;
             _keyboardBotCreate = keyboardBotCreate;
