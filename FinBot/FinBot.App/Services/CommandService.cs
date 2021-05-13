@@ -289,18 +289,6 @@ namespace FinBot.App.Services
                 _db.CreateCategory(text, false);
                 _consumptionSetting = false;
             }
-
-            if (_flagRemoveCategory)
-            {
-                var category = _db.GetCategory(text);
-                if (category != null)
-                {
-                    _db.DeleteCategory(category.Id);
-                    SendingShortCommand("Выполнено!");
-                }
-
-                _flagRemoveCategory = false;
-            }
         }
 
         private void ParseCallbackInputText(string response)
