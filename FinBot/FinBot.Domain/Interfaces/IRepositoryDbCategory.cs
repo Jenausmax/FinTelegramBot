@@ -9,6 +9,6 @@ namespace FinBot.Domain.Interfaces
         bool DeleteCategory(int id);
         bool EditCategory(Category category);
         List<Category> GetCollectionCategories();
-        Category GetCategory();
+        Category GetCategory(string name);
     }
 }

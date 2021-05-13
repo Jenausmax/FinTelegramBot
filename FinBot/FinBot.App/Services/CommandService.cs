@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
 using Telegram.Bot.Types;
@@ -17,6 +18,7 @@ namespace FinBot.App.Services
         private static bool _flagConsumption = false;
         private static bool _incomeSetting = false;
         private static bool _consumptionSetting = false;
+        private static bool _flagRemoveCategory = false;
 
         public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb db)
         {
@@ -126,6 +128,14 @@ namespace FinBot.App.Services
                             keyCollection: AddSettingMenu()));
                     break;
                 case "Remove category":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        "Категории для удаления: ",
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: RemoveCategoryList()));
+                    _flagRemoveCategory = true;
                     break;
                 #endregion
 
@@ -178,6 +188,10 @@ namespace FinBot.App.Services
                             callBack: default,
                             key: default,
                             keyCollection: AllCommandMenu()));
+                    break;
+
+                default:
+                    ParseCallbackInputText(update.CallbackQuery.Data);
                     break;
             }
         }
@@ -237,6 +251,31 @@ namespace FinBot.App.Services
 
         private string InputCategory() => "Введите название категории: ";
 
+
+        private List<string> RemoveCategoryList()
+        {
+            var categories = _db.GetCollectionCategories();
+            var removeListCategoriesName = new List<string>();
+            foreach (var category in categories)
+            {
+                removeListCategoriesName.Add(category.Name);
+            }
+
+            return removeListCategoriesName;
+        }
+
+        private string RemoveCategory()
+        {
+            var categories = _db.GetCollectionCategories();
+            var removeNameCategories = new StringBuilder();
+            foreach (var category in categories)
+            {
+                removeNameCategories.AppendFormat($"{category.Name}, ");
+            }
+
+            return removeNameCategories.ToString();
+        }
+
         private void ParseInputText(string text)
         {
             if (_incomeSetting)
@@ -249,6 +288,33 @@ namespace FinBot.App.Services
             {
                 _db.CreateCategory(text, false);
                 _consumptionSetting = false;
+            }
+
+            if (_flagRemoveCategory)
+            {
+                var category = _db.GetCategory(text);
+                if (category != null)
+                {
+                    _db.DeleteCategory(category.Id);
+                    SendingShortCommand("Выполнено!");
+                }
+
+                _flagRemoveCategory = false;
+            }
+        }
+
+        private void ParseCallbackInputText(string response)
+        {
+            if (_flagRemoveCategory)
+            {
+                var category = _db.GetCategory(response);
+                if (category != null)
+                {
+                    _db.DeleteCategory(category.Id);
+                    SendingShortCommand("Выполнено!");
+                }
+
+                _flagRemoveCategory = false;
             }
         }
 
@@ -263,6 +329,13 @@ namespace FinBot.App.Services
             {
                 _flagConsumption = false;
             }
+        }
+
+
+        private async void SendingShortCommand(string message)
+        {
+            await _updateService.EchoTextMessageAsync(_update,
+                message);
         }
 
     }

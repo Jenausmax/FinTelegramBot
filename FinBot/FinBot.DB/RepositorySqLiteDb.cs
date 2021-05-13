@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 using Microsoft.Data.Sqlite;
@@ -22,22 +26,21 @@ namespace FinBot.DB
             int intRole;
             intRole = role ? 1 : 0;
             var category = new Category() { Name = nameCategory, Role = role };
-            using (var connection = new SqliteConnection(CONNECTIONSTRING))
+
+            using (var db = new SqliteConnection(CONNECTIONSTRING))
             {
-                connection.Open();
-
-                var command = new SqliteCommand();
-                command.Connection = connection;
-                command.CommandText = $"INSERT INTO Categories (Name, Role) VALUES ('{category.Name}', {intRole})";
-
-                connection.Close();
+                db.Execute("INSERT INTO Categories (Name, Role) VALUES (@Name, @Role)", category);
                 return true;
             }
         }
 
         public bool DeleteCategory(int id)
         {
-            throw new NotImplementedException();
+            using (var db = new SqliteConnection(CONNECTIONSTRING))
+            {
+                db.Execute("DELETE FROM Categories WHERE Id = @id", new { id });
+                return true;
+            }
         }
 
         public bool EditCategory(Category category)
@@ -46,24 +49,15 @@ namespace FinBot.DB
         }
 
 
-        public bool CreateIncome(int idCategory, Income income)
+        public bool CreateIncome(Income income)
         {
-            if (income != null)
+            using (var db = new SqliteConnection(CONNECTIONSTRING))
             {
-                using (var connection = new SqliteConnection(CONNECTIONSTRING))
-                {
-                    connection.Open();
-
-                    var command = new SqliteCommand();
-                    command.Connection = connection;
-                    command.CommandText = $"INSERT INTO Income (Date, Money, CategoryId) VALUES ('{income.Date}',{income.Money},{idCategory})";
-
-                    connection.Close();
-                    return true;
-                }
+                db.Execute(
+                    "INSERT INTO Incomes (Date, Money, CategoryId) VALUES (@Date, @Money, @CategoryId)",
+                    income);
+                return true;
             }
-
-            return false;
         }
 
         public bool DeleteIncome(int id)
@@ -78,27 +72,23 @@ namespace FinBot.DB
 
         public List<Income> GetCollectionIncomes()
         {
-            throw new NotImplementedException();
+            var sqlExpression = "SELECT * FROM Incomes";
+            using (IDbConnection dbConnection = new SqlConnection(CONNECTIONSTRING))
+            {
+                return dbConnection.Query<Income>(sqlExpression).ToList();
+            }
         }
 
-        public bool CreateConsumption(int idCategory, Consumption consumption)
+        public bool CreateConsumption(Consumption consumption)
         {
-            if (consumption != null)
+
+            using (var db = new SqliteConnection(CONNECTIONSTRING))
             {
-                using (var connection = new SqliteConnection(CONNECTIONSTRING))
-                {
-                    connection.Open();
-
-                    var command = new SqliteCommand();
-                    command.Connection = connection;
-                    command.CommandText = $"INSERT INTO Income (Date, Money, CategoryId) VALUES ('{consumption.Date}',{consumption.Money},{idCategory})";
-
-                    connection.Close();
-                    return true;
-                }
+                db.Execute(
+                    "INSERT INTO Consumptions (Date, Money, CategoryId) VALUES (@Date, @Money, @CategoryId)",
+                    consumption);
+                return true;
             }
-
-            return false;
         }
 
         public bool DeleteConsumption(int id)
@@ -113,53 +103,30 @@ namespace FinBot.DB
 
         public List<Consumption> GetCollectionConsumptions()
         {
-            throw new NotImplementedException();
+            var sqlExpression = "SELECT * FROM Consumptions";
+            using (IDbConnection dbConnection = new SqliteConnection(CONNECTIONSTRING))
+            {
+                return dbConnection.Query<Consumption>(sqlExpression).ToList();
+            }
         }
 
 
         public List<Category> GetCollectionCategories()
         {
-            var categories = new List<Category>();
-            string sqlExpression = "SELECT * FROM Categories";
-            using (var connection = new SqliteConnection(CONNECTIONSTRING))
+            var sqlExpression = "SELECT * FROM Categories";
+            using (IDbConnection dbConnection = new SqliteConnection(CONNECTIONSTRING))
             {
-                connection.Open();
-                var command = new SqliteCommand(sqlExpression, connection);
-                using (SqliteDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            int roleValue = reader.GetInt32(2);
-                            bool role;
-                            if (roleValue == 0)
-                            {
-                                role = false;
-                            }
-                            else
-                            {
-                                role = true;
-                            }
-
-                            var category = new Category()
-                            {
-                                Id = reader.GetInt32(0),
-                                Name = reader.GetString(1),
-                                Role = role
-                            };
-                            categories.Add(category);
-                        }
-                    }
-                }
+                return dbConnection.Query<Category>(sqlExpression).ToList();
             }
 
-            return categories;
         }
 
-        public Category GetCategory()
+        public Category GetCategory(string name)
         {
-            throw new NotImplementedException();
+            using (var db = new SqliteConnection(CONNECTIONSTRING))
+            {
+                return db.QueryFirstOrDefault<Category>("SELECT * FROM Categories WHERE Name = @name", new { name });
+            }
         }
 
 

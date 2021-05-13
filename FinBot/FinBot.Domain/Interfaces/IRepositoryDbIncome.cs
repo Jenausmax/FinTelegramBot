@@ -5,7 +5,7 @@ namespace FinBot.Domain.Interfaces
 {
     public interface IRepositoryDbIncome
     {
-        bool CreateIncome(int idCategory, Income income);
+        bool CreateIncome(Income income);
         bool DeleteIncome(int id);
         bool EditIncome(Income income);
         List<Income> GetCollectionIncomes();

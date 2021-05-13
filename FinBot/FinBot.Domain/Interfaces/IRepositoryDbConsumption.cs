@@ -5,7 +5,7 @@ namespace FinBot.Domain.Interfaces
 {
     public interface IRepositoryDbConsumption
     {
-        bool CreateConsumption(int idCategory, Consumption consumption);
+        bool CreateConsumption(Consumption consumption);
         bool DeleteConsumption(int id);
         bool EditConsumption(Consumption consumption);
         List<Consumption> GetCollectionConsumptions();
