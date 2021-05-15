@@ -7,7 +7,7 @@ namespace FinBot.Domain.Interfaces
     {
         bool CreateCategory(string nameCategory, bool role);
         bool DeleteCategory(int id);
-        bool EditCategory(Category category);
+        bool UpdateCategory(Category category);
         List<Category> GetCollectionCategories();
         Category GetCategory(string name);
     }

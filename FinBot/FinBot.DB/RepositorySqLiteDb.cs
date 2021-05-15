@@ -16,7 +16,7 @@ namespace FinBot.DB
 
 
         /// <summary>
-        /// Создание сущности Category.
+        /// Метод создание сущности Category.
         /// </summary>
         /// <param name="nameCategory">Название категории.</param>
         /// <param name="role">true = income категория, false = consumption категория</param>
@@ -34,6 +34,11 @@ namespace FinBot.DB
             }
         }
 
+        /// <summary>
+        /// Метод удаления категории.
+        /// </summary>
+        /// <param name="id">Id категории</param>
+        /// <returns>true - объект удален, false - ошибка удаления.</returns>
         public bool DeleteCategory(int id)
         {
             using (var db = new SqliteConnection(CONNECTIONSTRING))
@@ -43,7 +48,12 @@ namespace FinBot.DB
             }
         }
 
-        public bool EditCategory(Category category)
+        /// <summary>
+        /// Метод 
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public bool UpdateCategory(Category category)
         {
             throw new NotImplementedException();
         }

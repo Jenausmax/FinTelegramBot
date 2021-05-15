@@ -47,7 +47,7 @@ namespace FinBot.App.Services
                     break;
 
                 default:
-                    //TODO Доделать ответ на неправильный запрос
+                    //TODO Доделать ответ на неправильное сообщение от пользователя
                     break;
             }
         }
@@ -87,6 +87,8 @@ namespace FinBot.App.Services
                     break;
             }
         }
+
+
 
         private async void CallbackMessageCommand(Update update)
         {
@@ -197,6 +199,7 @@ namespace FinBot.App.Services
         }
 
 
+
         /// <summary>
         /// Полное командное меню для чата.
         /// </summary>
@@ -251,7 +254,10 @@ namespace FinBot.App.Services
 
         private string InputCategory() => "Введите название категории: ";
 
-
+        /// <summary>
+        /// Метод формирования списка категорий на удаление
+        /// </summary>
+        /// <returns></returns>
         private List<string> RemoveCategoryList()
         {
             var categories = _db.GetCollectionCategories();
@@ -264,17 +270,6 @@ namespace FinBot.App.Services
             return removeListCategoriesName;
         }
 
-        private string RemoveCategory()
-        {
-            var categories = _db.GetCollectionCategories();
-            var removeNameCategories = new StringBuilder();
-            foreach (var category in categories)
-            {
-                removeNameCategories.AppendFormat($"{category.Name}, ");
-            }
-
-            return removeNameCategories.ToString();
-        }
 
         private void ParseInputText(string text)
         {
@@ -320,6 +315,10 @@ namespace FinBot.App.Services
         }
 
 
+        /// <summary>
+        /// Метод отправки короткого сообщение для пользователя о выполнении.
+        /// </summary>
+        /// <param name="message"></param>
         private async void SendingShortCommand(string message)
         {
             await _updateService.EchoTextMessageAsync(_update,
