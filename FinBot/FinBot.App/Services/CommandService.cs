@@ -9,7 +9,7 @@ namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
-        private IBaseRepositoryDb _db;
+        private IBaseRepositoryDb<IEntity> _db;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
@@ -20,7 +20,7 @@ namespace FinBot.App.Services
         private static bool _consumptionSetting = false;
         private static bool _flagRemoveCategory = false;
 
-        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb db)
+        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb<IEntity> db)
         {
             _db = db;
             _keyboardBotCreate = keyboardBotCreate;
@@ -260,44 +260,45 @@ namespace FinBot.App.Services
         /// <returns></returns>
         private List<string> RemoveCategoryList()
         {
-            var categories = _db.GetCollectionCategories();
-            var removeListCategoriesName = new List<string>();
-            foreach (var category in categories)
-            {
-                removeListCategoriesName.Add(category.Name);
-            }
+            //var categories = _db.GetCollectionCategories();
+            //var removeListCategoriesName = new List<string>();
+            //foreach (var category in categories)
+            //{
+            //    removeListCategoriesName.Add(category.Name);
+            //}
 
-            return removeListCategoriesName;
+            //return removeListCategoriesName;
+            return null;
         }
 
 
         private void ParseInputText(string text)
         {
-            if (_incomeSetting)
-            {
-                _db.CreateCategory(text, true);
-                _incomeSetting = false;
-            }
+            //if (_incomeSetting)
+            //{
+            //    _db.CreateCategory(text, true);
+            //    _incomeSetting = false;
+            //}
 
-            if (_consumptionSetting)
-            {
-                _db.CreateCategory(text, false);
-                _consumptionSetting = false;
-            }
+            //if (_consumptionSetting)
+            //{
+            //    _db.CreateCategory(text, false);
+            //    _consumptionSetting = false;
+            //}
         }
 
         private void ParseCallbackInputText(string response)
         {
             if (_flagRemoveCategory)
             {
-                var category = _db.GetCategory(response);
-                if (category != null)
-                {
-                    _db.DeleteCategory(category.Id);
-                    SendingShortCommand("Выполнено!");
-                }
+                //var category = _db.GetCategory(response);
+                //if (category != null)
+                //{
+                //    _db.DeleteCategory(category.Id);
+                //    SendingShortCommand("Выполнено!");
+                //}
 
-                _flagRemoveCategory = false;
+                //_flagRemoveCategory = false;
             }
         }
 

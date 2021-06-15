@@ -1,11 +1,9 @@
 ﻿
+using FinBot.Domain.Models.Entities;
+
 namespace FinBot.Domain.Models
 {
-    public class Consumption
+    public class Consumption : BaseCoInEntity
     {
-        public int Id { get; set; }
-        public string Date { get; set; }
-        public double Money { get; set; }
-        public int CategoryId { get; set; }
     }
 }

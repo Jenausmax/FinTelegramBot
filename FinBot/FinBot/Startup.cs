@@ -1,12 +1,19 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FinBot.App.Services;
 using FinBot.DB;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinBot
 {
@@ -21,9 +28,12 @@ namespace FinBot
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataDb>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddScoped<IBaseRepositoryDb, RepositorySqLiteDb>();
+            services.AddScoped<IBaseRepositoryDb<IEntity>>();
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
