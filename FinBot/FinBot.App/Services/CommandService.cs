@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using FinBot.App.Phrases;
+﻿using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
+using FinBot.Domain.Models;
+using System;
+using System.Collections.Generic;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -14,11 +15,14 @@ namespace FinBot.App.Services
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
 
-        private static bool _flagIncome = false;
-        private static bool _flagConsumption = false;
-        private static bool _incomeSetting = false;
-        private static bool _consumptionSetting = false;
-        private static bool _flagRemoveCategory = false;
+        private static bool _registrationFlag = false;
+
+        //private static Domain.Models.User _user;
+        private static Domain.Models.User _userMale;
+        private static Domain.Models.User _userFemale;
+        private static int _userOldChatId;
+        private static Meeting _meeting = new Meeting();
+
 
         public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb db)
         {
@@ -34,6 +38,10 @@ namespace FinBot.App.Services
             _update = update;
         }
 
+        /// <summary>
+        /// Метод определения типа пришедшего update.
+        /// </summary>
+        /// <param name="type"></param>
         public void SetCommandBot(Telegram.Bot.Types.Enums.UpdateType type)
         {
             switch (type)
@@ -53,34 +61,38 @@ namespace FinBot.App.Services
         }
 
 
-
+        /// <summary>
+        /// Метод обработки сообщений.
+        /// </summary>
+        /// <param name="update"></param>
         private async void MessageCommand(Update update)
         {
             var message = update.Message.Text;
             switch (message)
             {
                 case "/start":
-                    await _updateService.EchoTextMessageAsync(
+                    if (CheckRegistration(update))
+                    {
+                        await _updateService.EchoTextMessageAsync(
                         update,
-                        BotPhrases.Start,
+                        update.Message.From.Id,
+                        BotPhrases.Start, 
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
                             keyCollection: AllCommandMenu()));
+                    }
+                    else
+                    {
+                        _registrationFlag = true;
+                        await _updateService.EchoTextMessageAsync(
+                            update,
+                            update.Message.From.Id,
+                            "Введите Ваше имя, год рождения и пол одной буквой(М - мужской, Ж - женский) через пробел: "
+                            );
+                    }
+                    
                     break;
-
-                //TODO Обдумать а нужно ли это командное меню
-                case "/income":
-                    break;
-
-
-                case "/consumption":
-                    break;
-
-
-                case "/balance":
-                    break;
-
 
                 default:
                     ParseInputText(message);
@@ -89,239 +101,398 @@ namespace FinBot.App.Services
         }
 
 
-
+        /// <summary>
+        /// Метод обработки callback`ов
+        /// </summary>
+        /// <param name="update"></param>
         private async void CallbackMessageCommand(Update update)
         {
             var callbackData = update.CallbackQuery.Data;
             switch (callbackData)
             {
-                #region Submenu Home
-                //подменю Home
-                case "Help":
+
+                case "Помощь":
                     await _updateService.EchoTextMessageAsync(
                         update,
+                        update.CallbackQuery.From.Id,
                         BotPhrases.Help,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             keyCollection: default,
                             key: Back()));
                     break;
 
-                case "Setting":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        BotPhrases.Start,
-                        _keyboardBotCreate.CreateInlineKeyboard(
-                            callBack: default,
-                            key: default,
-                            keyCollection: SettingMenu()));
-                    break;
-
-                #endregion
-
-                #region Submenu Setting
-
-                case "Add category":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        BotPhrases.AddSettingMenu,
-                        _keyboardBotCreate.CreateInlineKeyboard(
-                            callBack: default,
-                            key: default,
-                            keyCollection: AddSettingMenu()));
-                    break;
-                case "Remove category":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        "Категории для удаления: ",
-                        _keyboardBotCreate.CreateInlineKeyboard(
-                            callBack: default,
-                            key: default,
-                            keyCollection: RemoveCategoryList()));
-                    _flagRemoveCategory = true;
-                    break;
-                #endregion
-
-                #region Submenu Add Category
-
-                //подменю Add Category
-                case "Income Setting":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        InputCategory(),
-                        keyboard: null);
-                    _incomeSetting = true;
-                    break;
-
-                case "Consumption Setting":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        InputCategory(),
-                        keyboard: null);
-                    _consumptionSetting = true;
-                    break;
-
-                #endregion
-
-                #region All Menu
-
                 //основное меню
-                case "Home":
+                case "Меню":
                     await _updateService.EchoTextMessageAsync(
                         update,
+                        update.CallbackQuery.From.Id,
                         BotPhrases.HomeMenu,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
                             keyCollection: HomeMenu()));
                     break;
-                case "Income":
-                    break;
-                case "Consumption":
-                    break;
-                case "Balance":
-                    break;
-                #endregion
 
-                case "<---Back Home":
+
+                case "Мужчина":
+                    var userMale = _db.SearchRandomUserToGender(true);
+                    _userMale = userMale;
+                    var userMaleString = GetUserInfo(userMale);
+                    SendingShortCommand($"Смотрите что я нашел:       {userMaleString}", _update.CallbackQuery.From.Id);
+                    SearchInterlocutorMenu(userMale);
+                    break;
+
+                case "Девушка":
+                    var userFemale = _db.SearchRandomUserToGender(false);
+                    _userFemale = userFemale;
+                    var userFemaleString = GetUserInfo(userFemale);
+                    SendingShortCommand($"Смотрите что я нашел:       {userFemaleString}", _update.CallbackQuery.From.Id);
+                    SearchInterlocutorMenu(userFemale);
+                    break;
+
+                case "Мои встречи":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        BotPhrases.Start,
+                        update.CallbackQuery.From.Id,
+                        "Ваши встречи: ",
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: AllCommandMenu()));
+                            keyCollection: MeetingAll(_update.CallbackQuery.From.Id)));
                     break;
 
+                case "Следующий собеседник":
+                case "Найти собеседника":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        update.CallbackQuery.From.Id,
+                        BotPhrases.NextUser,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: NextUser()));
+                    break;
+
+                case "Встреча c мужчиной":
+                    SendingShortCommand("Встреча будет проходить на следующий день.", update.CallbackQuery.From.Id);
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        update.CallbackQuery.From.Id,
+                        "Выберите время...  ",
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: default,
+                            keyDictionary: СonfirmDictionary()));
+
+                    _userOldChatId = update.CallbackQuery.From.Id;
+                    break;
+
+
+                case "Муж13":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        _userMale.ChatId,
+                        "Вам предложена встреча завтра в 13:00",
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: СonfirmMenu()));
+                    break;
+
+                case "Муж14":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        _userMale.ChatId,
+                        "Вам предложена встреча завтра в 14:00",
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: СonfirmMenuTwo()));
+                    break;
+
+                case "Подтвердить на 13:00":
+                    ConfirmMeeting(13);
+                    break;
+
+                case "Подтвердить на 14:00":
+                    ConfirmMeeting(14);
+                    break;
+
+                case "Встреча c девушкой":
+                    break;
+
+
                 default:
-                    ParseCallbackInputText(update.CallbackQuery.Data);
+                    //ParseCallbackInputText(update.CallbackQuery.Data);
                     break;
             }
         }
 
+        private void ConfirmMeeting(int time)
+        {
+            var date = DateTime.Today.AddDays(1).ToString();
+            var dateSplit = date.Split('.', ' ');
+            _meeting.DateOfMeeting = new DateTime(Convert.ToInt32(dateSplit[2]), Convert.ToInt32(dateSplit[1]), Convert.ToInt32(dateSplit[0]), time, 00, 00);
+            _db.CreateMeeting(_meeting);
 
+            var oldUser = _db.SearchUserToChatId(_userOldChatId);
+            var currentUser = _db.SearchUserToChatId(_update.CallbackQuery.From.Id);
+
+            oldUser.Meetings.Add(_meeting);
+            currentUser.Meetings.Add(_meeting);
+            _db.Save();
+
+            SendingShortCommand("Встреча зарегистрирована!", _userOldChatId);
+            SendingShortCommand("Встреча зарегистрирована!", _update.CallbackQuery.From.Id);
+        }
+
+        private Dictionary<string,string> СonfirmDictionary()
+        {
+            var start = new Dictionary<string,string>()
+            {
+                {"13:00", "Муж13"},
+                {"14:00", "Муж14" }
+
+            };
+            return start;
+        } 
+
+        private List<string> СonfirmMenu()
+        {
+            var start = new List<string>()
+            {
+                "Подтвердить на 13:00",
+                "Отмена"
+            };
+            return start;
+        }
+
+        private List<string> СonfirmMenuTwo()
+        {
+            var start = new List<string>()
+            {
+                "Подтвердить на 14:00",
+                "Отмена"
+            };
+            return start;
+        }
+
+        private List<string> TimeMeeting()
+        {
+            var start = new List<string>()
+            {
+                "12:00",
+                "13:00"
+            };
+            return start;
+        }
 
         /// <summary>
-        /// Полное командное меню для чата.
+        /// Командное меню для чата.
         /// </summary>
         /// <returns></returns>
         private List<string> AllCommandMenu() //Командная клавиатура
         {
             var start = new List<string>()
             {
-                "Home",
-                "Income",
-                "Consumption",
-                "Balance"
+                "Меню",
+                "Помощь",
             };
             return start;
         }
 
-
-        private List<string> SettingMenu() //Setting клавиатура
+        /// <summary>
+        /// Home меню.
+        /// </summary>
+        /// <returns></returns>
+        private List<string> HomeMenu() 
         {
             var start = new List<string>()
             {
-                "Add category",
-                "Remove category"
+                "Найти собеседника",
+                "Мои встречи",
+                "Редактировать профиль"
             };
             return start;
         }
 
-        private List<string> AddSettingMenu() //Add Setting клавиатура
+        private List<string> NextUser()
         {
             var start = new List<string>()
             {
-                "Income Setting",
-                "Consumption Setting"
+                "Мужчина",
+                "Девушка"
             };
             return start;
         }
 
-        private List<string> HomeMenu() //Add Setting клавиатура
+        private List<string> QuestionReadinessToMeet(bool gender)
         {
-            var start = new List<string>()
+            if (gender)
             {
-                "Setting",
-                "Help"
+                var start = new List<string>()
+            {
+                "Встреча c мужчиной",
+                "Следующий собеседник",
+                "Меню"
             };
-            return start;
+                return start;
+            }
+            else
+            {
+                var start = new List<string>()
+            {
+                "Встреча с девушкой",
+                "Следующий собеседник",
+                "Меню"
+            };
+                return start;
+            }
+           
         }
 
         private string Back() //button back
         {
-            return " <---Back Home";
+            return "Меню";
         }
 
-        private string InputCategory() => "Введите название категории: ";
 
         /// <summary>
-        /// Метод формирования списка категорий на удаление
+        /// Метод поиска собеседника.
         /// </summary>
-        /// <returns></returns>
-        private List<string> RemoveCategoryList()
+        private async void SearchInterlocutorMenu(Domain.Models.User user)
         {
-            var categories = _db.GetCollectionCategories();
-            var removeListCategoriesName = new List<string>();
-            foreach (var category in categories)
+            int chatId = 0;
+            if(_update.Type == UpdateType.Message)
             {
-                removeListCategoriesName.Add(category.Name);
+                chatId = _update.Message.From.Id;
             }
-
-            return removeListCategoriesName;
+            if(_update.Type == UpdateType.CallbackQuery)
+            {
+                chatId = _update.CallbackQuery.From.Id;
+            }
+            await _updateService.EchoTextMessageAsync(
+                _update,
+                chatId,
+                message: "Хотите встретиться?",
+                keyboard: _keyboardBotCreate.CreateInlineKeyboard(
+                    keyCollection: QuestionReadinessToMeet(user.Gender)));
         }
 
 
-        private void ParseInputText(string text)
+        /// <summary>
+        /// Метод парсинга текстовых сообщений от пользователя.
+        /// </summary>
+        /// <param name="textMessage"></param>
+        private void ParseInputText(string textMessage)
         {
-            if (_incomeSetting)
+            if (_registrationFlag)
             {
-                _db.CreateCategory(text, true);
-                _incomeSetting = false;
-            }
-
-            if (_consumptionSetting)
-            {
-                _db.CreateCategory(text, false);
-                _consumptionSetting = false;
-            }
-        }
-
-        private void ParseCallbackInputText(string response)
-        {
-            if (_flagRemoveCategory)
-            {
-                var category = _db.GetCategory(response);
-                if (category != null)
+                var parseUser = textMessage.Split(' ');
+                int birdth;
+                int.TryParse(parseUser[1], out birdth);
+                bool gender;
+                parseUser[2].ToLower();
+                if(parseUser[2] == "м")
                 {
-                    _db.DeleteCategory(category.Id);
-                    SendingShortCommand("Выполнено!");
+                    gender = true;
+                }
+                else if(parseUser[2] == "ж")
+                {
+                    gender = false;
+                }
+                else
+                {
+                    SendingShortCommand("Ошибка регистрации!", _update.Message.From.Id);
+                    return;
                 }
 
-                _flagRemoveCategory = false;
+                var userCreateTrue = _db.CreateUser(new Domain.Models.User()
+                        {
+                            Name = parseUser[0],
+                            MeetingReadinessStatus = true,
+                            YearOfBirdth = birdth,
+                            ChatId = _update.Message.From.Id,
+                            AboutMy = "",
+                            Gender = gender,
+                            Rating = 1
+                        });
+                if (userCreateTrue)
+                {
+                    SendingShortCommand("Регистрация успешна", _update.Message.From.Id);
+                    _registrationFlag = false;
+                    var user = _db.SearchRandomUserToGender(gender);
+                    var userString = GetUserInfo(user);
+                    SendingShortCommand($"Могу сразу предложить Вам встречу:       {userString}", _update.Message.From.Id);
+                    SearchInterlocutorMenu(user);
+                }
+                else
+                {
+                    SendingShortCommand("Ошибка регистрации!", _update.Message.From.Id);
+                }
             }
         }
 
-        private void ParseInputMoney(int idCategory, string money)
+
+        private List<string> MeetingAll(int chatId)
         {
-            if (_flagIncome)
-            {
-                _flagIncome = false;
-            }
 
-            if (_flagConsumption)
+            var meetings = _db.SearchMeetingToUser(_db.SearchUserToChatId(chatId).Id);
+            var meetingString = new List<string>();
+            if(meetings != null)
             {
-                _flagConsumption = false;
+                foreach (var item in meetings)
+                {
+                    meetingString.Add(item.DateOfMeeting.ToString());
+                }
+                return meetingString;
+            }
+            else
+            {
+                return new List<string>() { "Встреч не зарегистрировано." };
             }
         }
-
 
         /// <summary>
-        /// Метод отправки короткого сообщение для пользователя о выполнении.
+        /// Метод проверки регистрации.
+        /// </summary>
+        /// <param name="update"></param>
+        /// <returns></returns>
+        private bool CheckRegistration(Update update)
+        {
+            var userId = update.Message.From.Id;
+            var user = _db.SearchUserToChatId(userId);
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Метод формирования информации о пользователе.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private string GetUserInfo(Domain.Models.User user)
+        {
+            if(user == null)
+            {
+                return BotPhrases.BaseNull;
+            }
+            return $"Имя: {user.Name}  год рождения: {user.YearOfBirdth}   О себе: {user.AboutMy}";
+        }
+
+        /// <summary>
+        /// Метод отправки короткого сообщение для пользователя.
         /// </summary>
         /// <param name="message"></param>
-        private async void SendingShortCommand(string message)
+        private async void SendingShortCommand(string message, int chatId)
         {
-            await _updateService.EchoTextMessageAsync(_update,
+            await _updateService.EchoTextMessageAsync(_update, chatId,
                 message);
         }
 

@@ -10,7 +10,7 @@ namespace FinBot.App.Services
     /// </summary>
     public class KeyboardService : IKeyboardBotCreate
     {
-        public virtual InlineKeyboardMarkup CreateInlineKeyboard(string callBack = default, string key = default, IList<string> keyCollection = default)
+        public virtual InlineKeyboardMarkup CreateInlineKeyboard(string callBack = default, string key = default, IList<string> keyCollection = default, Dictionary<string,string> keyDictionary = default)
         {
             if (callBack == null)
             {
@@ -19,12 +19,22 @@ namespace FinBot.App.Services
                     return new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData(key));
                 }
 
+                List<InlineKeyboardButton> list = new List<InlineKeyboardButton>();
                 if (keyCollection != null)
                 {
-                    List<InlineKeyboardButton> list = new List<InlineKeyboardButton>();
+                    
                     foreach (var keyNew in keyCollection)
                     {
                         list.Add(new InlineKeyboardButton().Text = keyNew);
+                    }
+                    return new InlineKeyboardMarkup(list);
+                }
+
+                if(keyDictionary != null)
+                {
+                    foreach (var item in keyDictionary)
+                    {
+                        list.Add(InlineKeyboardButton.WithCallbackData(item.Key, item.Value));
                     }
                     return new InlineKeyboardMarkup(list);
                 }
@@ -36,10 +46,6 @@ namespace FinBot.App.Services
                     return new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData(key, callBack));
                 }
             }
-
-
-
-
             return null;
         }
     }

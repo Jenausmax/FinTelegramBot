@@ -6,6 +6,6 @@ namespace FinBot.Domain.Interfaces
 {
     public interface IUpdateService
     {
-        Task EchoTextMessageAsync(Update update, string message, InlineKeyboardMarkup keyboard = default);
+        Task EchoTextMessageAsync(Update update, int chatId, string message, InlineKeyboardMarkup keyboard = default);
     }
 }

@@ -22,7 +22,7 @@ namespace FinBot.App.Services
         /// <param name="message">Новое сообщение.</param>
         /// <param name="keyboard">Клавиатура для взаимодействия.</param>
         /// <returns></returns>
-        public async Task EchoTextMessageAsync(Update update, string message, InlineKeyboardMarkup keyboard = default)
+        public async Task EchoTextMessageAsync(Update update, int chatId, string message, InlineKeyboardMarkup keyboard = default)
         {
             if (update.Type == UpdateType.Message) //обработка текстовых сообщений
             {
@@ -30,6 +30,7 @@ namespace FinBot.App.Services
                 {
                     var newMessage = update.Message;
                     newMessage.Text = message;
+                    newMessage.Chat.Id = chatId;
                     await _botService.Client.SendTextMessageAsync(newMessage.Chat.Id,
                         newMessage.Text,
                         parseMode: default,
@@ -46,6 +47,7 @@ namespace FinBot.App.Services
                 {
                     var newMessageCallbackQueryMessage = update.CallbackQuery.Message;
                     newMessageCallbackQueryMessage.Text = message;
+                    newMessageCallbackQueryMessage.Chat.Id = chatId;
                     await _botService.Client.SendTextMessageAsync(newMessageCallbackQueryMessage.Chat.Id,
                         newMessageCallbackQueryMessage.Text,
                         parseMode: default,
@@ -61,8 +63,6 @@ namespace FinBot.App.Services
             {
                 return;
             }
-
-
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace FinBot.Domain.Interfaces
 {
-    public interface IBaseRepositoryDb : IRepositoryDbCategory, IRepositoryDbIncome, IRepositoryDbConsumption
+    public interface IBaseRepositoryDb : IRepositoryDbUser, IRepositoryDbMeeting
     {
+        void Save();
     }
 }
