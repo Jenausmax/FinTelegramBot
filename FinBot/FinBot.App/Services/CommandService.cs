@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
+using FinBot.Domain.Models.Entities;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using User = FinBot.Domain.Models.User;
 
 namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
-        private IBaseRepositoryDb<IEntity> _db;
+        private IBaseRepositoryDb<User> _userDb;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
@@ -20,30 +23,30 @@ namespace FinBot.App.Services
         private static bool _consumptionSetting = false;
         private static bool _flagRemoveCategory = false;
 
-        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb<IEntity> db)
+        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb<User> db)
         {
-            _db = db;
+            _userDb = db;
             _keyboardBotCreate = keyboardBotCreate;
             _updateService = updateService;
         }
 
 
 
-        public void SetUpdateBot(Update update)
+        public async Task SetUpdateBot(Update update)
         {
             _update = update;
         }
 
-        public void SetCommandBot(Telegram.Bot.Types.Enums.UpdateType type)
+        public async Task SetCommandBot(Telegram.Bot.Types.Enums.UpdateType type)
         {
             switch (type)
             {
                 case UpdateType.Message:
-                    MessageCommand(_update);
+                    await MessageCommand(_update);
                     break;
 
                 case UpdateType.CallbackQuery:
-                    CallbackMessageCommand(_update);
+                    await CallbackMessageCommand(_update);
                     break;
 
                 default:
@@ -54,7 +57,7 @@ namespace FinBot.App.Services
 
 
 
-        private async void MessageCommand(Update update)
+        private async Task MessageCommand(Update update)
         {
             var message = update.Message.Text;
             switch (message)
@@ -90,7 +93,7 @@ namespace FinBot.App.Services
 
 
 
-        private async void CallbackMessageCommand(Update update)
+        private async Task CallbackMessageCommand(Update update)
         {
             var callbackData = update.CallbackQuery.Data;
             switch (callbackData)

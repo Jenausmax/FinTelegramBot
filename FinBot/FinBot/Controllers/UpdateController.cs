@@ -20,8 +20,8 @@ namespace FinBot.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Update update)
         {
-            _commandBot.SetUpdateBot(update);
-            _commandBot.SetCommandBot(update.Type);
+            await _commandBot.SetUpdateBot(update);
+            await _commandBot.SetCommandBot(update.Type);
             return Ok();
         }
     }

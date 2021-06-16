@@ -33,10 +33,12 @@ namespace FinBot
             services.AddDbContext<DataDb>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IEntity, Entity>();
+            //services.AddScoped<IEntity, Entity>();
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddScoped<IBaseRepositoryDb<IEntity>, RepositoryDb<IEntity>>();
+            services.AddScoped<RepositoryDb<Entity>>();
+            services.AddScoped<IBaseRepositoryDb<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
+            services.AddScoped<IRepositoryReader<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));

@@ -13,6 +13,7 @@ namespace FinBot.Domain.Models.Entities
     {
         public DateTime Date { get; set; }
         public double Money { get; set; }
+        public bool IsDelete { get; set; }
 
         public int CategoryId { get; set; }
         public Category Category { get; set; }

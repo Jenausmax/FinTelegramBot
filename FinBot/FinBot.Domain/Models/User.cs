@@ -11,6 +11,7 @@ namespace FinBot.Domain.Models
     {
         public long ChatId { get; set; }
         public string NickName { get; set; }
+        public bool IsDelete { get; set; }
         public List<Category> Categories { get; set; }
         public List<Consumption> Consumptions { get; set; }
         public List<Income> Incomes { get; set; }

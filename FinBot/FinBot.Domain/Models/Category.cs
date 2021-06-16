@@ -6,6 +6,7 @@ namespace FinBot.Domain.Models
     {
         public string Name { get; set; }
         public bool Role { get; set; }
+        public bool IsDelete { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }
