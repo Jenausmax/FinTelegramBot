@@ -11,8 +11,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinBot.App.Services;
 using FinBot.DB;
+using FinBot.DB.Repositories;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
+using FinBot.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinBot
@@ -31,9 +33,10 @@ namespace FinBot
             services.AddDbContext<DataDb>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IEntity, Entity>();
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddScoped<IBaseRepositoryDb<IEntity>>();
+            services.AddScoped<IBaseRepositoryDb<IEntity>, RepositoryDb<IEntity>>();
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));

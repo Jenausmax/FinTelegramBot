@@ -13,7 +13,7 @@ namespace FinBot.DB
     {
         public DataDb(DbContextOptions<DataDb> options ) : base(options)
         {
-            Database.EnsureCreated();
+           // Database.EnsureCreated();
         }
 
         public DbSet<User> Users { get; set; }
@@ -21,9 +21,5 @@ namespace FinBot.DB
         public DbSet<Consumption> Consumptions { get; set; }
         public DbSet<Income> Incomes { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
     }
 }
