@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using FinBot.App.Phrases;
+﻿using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
-using FinBot.Domain.Models.Entities;
+using FinBot.Domain.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using User = FinBot.Domain.Models.User;
 
 namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
-        private IBaseRepositoryDb<User> _userDb;
+        private IBaseRepositoryDb<Category> _categoryDb;
+        private IBaseRepositoryDb<Consumption> _consumptionDb;
+        private IBaseRepositoryDb<Income> _incomeDb;
+        private IUserControl _userControl;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
@@ -23,11 +24,19 @@ namespace FinBot.App.Services
         private static bool _consumptionSetting = false;
         private static bool _flagRemoveCategory = false;
 
-        public CommandService(IKeyboardBotCreate keyboardBotCreate, IUpdateService updateService, IBaseRepositoryDb<User> db)
+        public CommandService(IKeyboardBotCreate keyboardBotCreate, 
+            IUpdateService updateService, 
+            IBaseRepositoryDb<Category> categoryDb, 
+            IBaseRepositoryDb<Consumption> cons, 
+            IBaseRepositoryDb<Income> inc, 
+            IUserControl userControl)
         {
-            _userDb = db;
             _keyboardBotCreate = keyboardBotCreate;
             _updateService = updateService;
+            _categoryDb = categoryDb;
+            _consumptionDb = cons;
+            _incomeDb = inc;
+            _userControl = userControl;
         }
 
 
