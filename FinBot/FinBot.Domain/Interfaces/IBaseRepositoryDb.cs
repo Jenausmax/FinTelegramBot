@@ -4,7 +4,7 @@ using FinBot.Domain.Models.Entities;
 
 namespace FinBot.Domain.Interfaces
 {
-    public interface IBaseRepositoryDb<T> : IRepositoryReader<T> where T : Entity
+    public interface IBaseRepositoryDb<T> : IRepositoryReader<T> where T : Entity, new()
     {
         Task<bool> Create(T entity, CancellationToken cancel = default);
         Task<T> Update(T entity, CancellationToken cancel = default);

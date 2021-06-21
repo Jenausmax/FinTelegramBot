@@ -31,9 +31,13 @@ namespace FinBot
             services.AddTransient<IUserControl, UserControlService>();
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddScoped<RepositoryDb<Entity>>();
-            services.AddScoped<IBaseRepositoryDb<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
-            services.AddScoped<IRepositoryReader<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
+            //services.AddScoped<RepositoryDb<Entity>>();
+            //services.AddScoped(typeof(RepositoryDb<>));
+            //services.AddScoped<IBaseRepositoryDb<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
+            //services.AddScoped<IRepositoryReader<Entity>>(s => s.GetRequiredService<RepositoryDb<Entity>>());
+
+            services.AddScoped(typeof(IBaseRepositoryDb<>),(typeof(RepositoryDb<>)));
+            services.AddScoped(typeof(IRepositoryReader<>),(typeof(RepositoryDb<>)));
             services.AddScoped<IKeyboardBotCreate, KeyboardService>();
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));

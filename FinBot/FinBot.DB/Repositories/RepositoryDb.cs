@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinBot.DB.Repositories
 {
-    public class RepositoryDb<T> : IBaseRepositoryDb<T> where T : Entity
+    public class RepositoryDb<T> : IBaseRepositoryDb<T> where T : Entity, new()
     {
         private readonly DataDb _db;
         protected DbSet<T> Set { get; }

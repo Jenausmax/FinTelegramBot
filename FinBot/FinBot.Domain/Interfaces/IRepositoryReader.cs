@@ -8,7 +8,7 @@ using FinBot.Domain.Models.Entities;
 
 namespace FinBot.Domain.Interfaces
 {
-    public interface IRepositoryReader<T> where T : Entity
+    public interface IRepositoryReader<T> where T : Entity, new()
     {
         Task<bool> ExistEntity(int id, CancellationToken cancel = default);
         Task<IEnumerable<T>> GetCollection(CancellationToken cancel = default);
