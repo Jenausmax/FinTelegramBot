@@ -1,11 +1,9 @@
 ﻿using FinBot.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
 using FinBot.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FinBot.DB.Repositories
 {
@@ -27,12 +25,12 @@ namespace FinBot.DB.Repositories
 
         public async Task<IEnumerable<T>> GetCollection(CancellationToken cancel = default)
         {
-            return await Set.ToArrayAsync();
+            return await Set.ToArrayAsync(cancel);
         }
 
         public async Task<T> GetEntity(T entity, CancellationToken cancel = default)
         {
-            throw new NotImplementedException();
+            return await GetEntityId(entity.Id, cancel);
         }
 
         public async Task<T> GetEntityId(int id, CancellationToken cancel = default)
@@ -42,19 +40,27 @@ namespace FinBot.DB.Repositories
 
         public async Task<bool> Create(T entity, CancellationToken cancel = default)
         {
-            await Set.AddAsync(entity);
-            await _db.SaveChangesAsync();
+            await Set.AddAsync(entity, cancel);
+            await _db.SaveChangesAsync(cancel);
             return true;
         }
 
         public async Task<T> Update(T entity, CancellationToken cancel = default)
         {
-            throw new NotImplementedException();
+            var entityModify = Set.Update(entity);
+            await _db.SaveChangesAsync(cancel);
+            return entityModify as T;
         }
 
         public async Task<bool> Delete(int id, CancellationToken cancel = default)
         {
-            throw new NotImplementedException();
+            var entity = await GetEntityId(id, cancel);
+            if (entity == null) return false;
+
+            Set.Remove(entity);
+            await _db.SaveChangesAsync(cancel);
+
+            return true;
         }
     }
 }
