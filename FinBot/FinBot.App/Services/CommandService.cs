@@ -52,10 +52,30 @@ namespace FinBot.App.Services
             {
                 case UpdateType.Message:
                     await MessageCommand(_update);
+                    var resMessageUser = await _userControl.SetUser(_update.Message.From.Id);
+                    if (resMessageUser == false)
+                    {
+                        var user = new Domain.Models.User()
+                        {
+                            ChatId = _update.Message.From.Id,
+                            NickName = _update.Message.From.Username
+                        };
+                        await _userControl.Create(user);
+                    }
                     break;
 
                 case UpdateType.CallbackQuery:
                     await CallbackMessageCommand(_update);
+                    var resCallbackUser = await _userControl.SetUser(_update.CallbackQuery.From.Id);
+                    if (resCallbackUser == false)
+                    {
+                        var user = new Domain.Models.User()
+                        {
+                            ChatId = _update.CallbackQuery.From.Id,
+                            NickName = _update.CallbackQuery.From.Username                                                       
+                        };
+                        await _userControl.Create(user);
+                    }
                     break;
 
                 default:
@@ -286,17 +306,17 @@ namespace FinBot.App.Services
 
         private void ParseInputText(string text)
         {
-            //if (_incomeSetting)
-            //{
-            //    _db.CreateCategory(text, true);
-            //    _incomeSetting = false;
-            //}
+            if (_incomeSetting)
+            {
 
-            //if (_consumptionSetting)
-            //{
-            //    _db.CreateCategory(text, false);
-            //    _consumptionSetting = false;
-            //}
+                _incomeSetting = false;
+            }
+
+            if (_consumptionSetting)
+            {
+
+                _consumptionSetting = false;
+            }
         }
 
         private void ParseCallbackInputText(string response)
