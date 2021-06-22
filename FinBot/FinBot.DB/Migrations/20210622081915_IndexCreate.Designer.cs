@@ -3,14 +3,16 @@ using System;
 using FinBot.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinBot.DB.Migrations
 {
     [DbContext(typeof(DataDb))]
-    partial class DataDbModelSnapshot : ModelSnapshot
+    [Migration("20210622081915_IndexCreate")]
+    partial class IndexCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

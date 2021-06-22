@@ -3,14 +3,16 @@ using System;
 using FinBot.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinBot.DB.Migrations
 {
     [DbContext(typeof(DataDb))]
-    partial class DataDbModelSnapshot : ModelSnapshot
+    [Migration("20210622074955_addlastfirsname")]
+    partial class addlastfirsname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,8 +68,6 @@ namespace FinBot.DB.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("Date");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Consumptions");
@@ -97,8 +97,6 @@ namespace FinBot.DB.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("Date");
 
                     b.HasIndex("UserId");
 

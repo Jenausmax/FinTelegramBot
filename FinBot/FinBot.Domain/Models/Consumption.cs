@@ -1,5 +1,4 @@
-﻿
-using FinBot.Domain.Models.Entities;
+﻿using FinBot.Domain.Models.Entities;
 
 namespace FinBot.Domain.Models
 {

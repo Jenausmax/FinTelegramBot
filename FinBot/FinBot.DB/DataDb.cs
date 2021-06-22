@@ -21,5 +21,15 @@ namespace FinBot.DB
         public DbSet<Consumption> Consumptions { get; set; }
         public DbSet<Income> Incomes { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Consumption>()
+                .HasIndex(x => x.Date);
+
+            modelBuilder.Entity<Income>()
+                .HasIndex(x => x.Date);
+        }
     }
 }
