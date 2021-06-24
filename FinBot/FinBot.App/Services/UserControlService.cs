@@ -41,6 +41,8 @@ namespace FinBot.App.Services
 
         public async Task<bool> Create(User user, CancellationToken cancel)
         {
+            if(user is null) throw new ArgumentNullException(nameof(user));
+
             return await _userDb.Create(user, cancel);
         }
     }
