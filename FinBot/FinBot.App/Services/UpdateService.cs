@@ -33,9 +33,11 @@ namespace FinBot.App.Services
                     await _botService.Client.SendTextMessageAsync(newMessage.Chat.Id,
                         newMessage.Text,
                         parseMode: default,
+                        entities: null,
                         disableWebPagePreview: false,
                         disableNotification: false,
                         replyToMessageId: 0,
+                        allowSendingWithoutReply: false,
                         keyboard);
                 }
             }
@@ -49,9 +51,11 @@ namespace FinBot.App.Services
                     await _botService.Client.SendTextMessageAsync(newMessageCallbackQueryMessage.Chat.Id,
                         newMessageCallbackQueryMessage.Text,
                         parseMode: default,
+                        entities: null,
                         disableWebPagePreview: false,
                         disableNotification: false,
                         replyToMessageId: 0,
+                        allowSendingWithoutReply: false,
                         keyboard);
                 }
             }
