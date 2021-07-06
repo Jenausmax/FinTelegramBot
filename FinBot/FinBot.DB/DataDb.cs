@@ -30,6 +30,31 @@ namespace FinBot.DB
 
             modelBuilder.Entity<Income>()
                 .HasIndex(x => x.Date);
+
+            modelBuilder.Entity<Consumption>()
+                .HasOne(x =>x.Category)
+                .WithMany()
+                .HasForeignKey(x =>x.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Income>()
+                .HasOne(x => x.Category)
+                .WithMany(x => x.Incomes)
+                .HasForeignKey(x => x.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(x => x.Incomes)
+                .WithOne()
+                .HasForeignKey(x => x.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+
         }
     }
 }

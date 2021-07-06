@@ -9,15 +9,13 @@ namespace FinBot.App.Services
 {
     public class UserControlService : IUserControl
     {
-        private User _user;
         private readonly IBaseRepositoryDb<User> _userDb;
         
-        public User User { get { return _user;} }
-
         public UserControlService(IBaseRepositoryDb<User> userDb)
         {
             _userDb = userDb;
         }
+
 
         public async Task<bool> SetUser(long chatId, User user = default, CancellationToken cancel = default)
         {
@@ -27,7 +25,8 @@ namespace FinBot.App.Services
             var userGetCollection = users.FirstOrDefault(u => u.ChatId == chatId);
             if (userGetCollection is not null)
             {
-                _user = userGetCollection;
+                CurrentUser.User = userGetCollection;
+                await _userDb.Update(userGetCollection, cancel);
                 return true;
             }
 

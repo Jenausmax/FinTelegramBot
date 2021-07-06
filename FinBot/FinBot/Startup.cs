@@ -7,6 +7,7 @@ using FinBot.Domain.Models.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +29,7 @@ namespace FinBot
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddScoped<IEntity, Entity>();
-            services.AddTransient<IUserControl, UserControlService>();
+            services.AddScoped<IUserControl, UserControlService>();
             services.AddScoped<IUpdateService, UpdateService>();
             services.AddSingleton<IBotService, BotService>();
             //services.AddScoped<RepositoryDb<Entity>>();

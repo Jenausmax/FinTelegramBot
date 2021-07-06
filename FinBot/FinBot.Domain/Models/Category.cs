@@ -5,6 +5,9 @@ namespace FinBot.Domain.Models
     public class Category : Entity
     {
         public string Name { get; set; }
+        /// <summary>
+        /// true - Consumption, false - Income
+        /// </summary>
         public bool Role { get; set; }
         public bool IsDelete { get; set; }
 

@@ -2,6 +2,8 @@
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -115,6 +117,7 @@ namespace FinBot.App.Services
 
 
                 default:
+                    var resMessageUser = await _userControl.SetUser(_update.Message.From.Id);
                     ParseInputText(message);
                     break;
             }
@@ -304,18 +307,41 @@ namespace FinBot.App.Services
         }
 
 
-        private void ParseInputText(string text)
+        private async void ParseInputText(string text, CancellationToken cancel = default)
         {
+            var entity = new Category() { Name = text, UserId = CurrentUser.User.Id};
             if (_incomeSetting)
             {
-
-                _incomeSetting = false;
+                entity.Role = false;
+                var categoryIncomes = await _categoryDb.GetCollection(cancel);
+                var inc = categoryIncomes.FirstOrDefault(e => e.Name == text);
+                if (inc == null)
+                {
+                    await _categoryDb.Create(entity, cancel);
+                    await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                    _incomeSetting = false;
+                }
+                else
+                {
+                    await SendingShortCommand(BotPhrases.CategoryExist);
+                }
             }
 
             if (_consumptionSetting)
             {
-
-                _consumptionSetting = false;
+                entity.Role = true;
+               var categoryConsumptions = await _categoryDb.GetCollection(cancel);
+               var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == text);
+               if (consumption == null)
+               {
+                   await _categoryDb.Create(entity, cancel);
+                   await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                   _consumptionSetting = false;
+               }
+               else
+               {
+                   await SendingShortCommand(BotPhrases.CategoryExist);
+               }
             }
         }
 
@@ -352,7 +378,7 @@ namespace FinBot.App.Services
         /// Метод отправки короткого сообщение для пользователя о выполнении.
         /// </summary>
         /// <param name="message"></param>
-        private async void SendingShortCommand(string message)
+        private async Task SendingShortCommand(string message)
         {
             await _updateService.EchoTextMessageAsync(_update,
                 message);

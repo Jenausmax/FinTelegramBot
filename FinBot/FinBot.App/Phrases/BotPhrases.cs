@@ -19,5 +19,8 @@ namespace FinBot.App.Phrases
 
         internal static string AddSettingMenu = "Add Category - Добавить новую категорию; Remove Category - Удалить категорию(пока не реализовано).";
         internal static string HomeMenu = "Setting - Можно добавить или удалить категорию; Help - помощь по использованию бота.";
+
+        internal static string UpdateSuccessful = "update successful!";
+        internal static string CategoryExist = "This category exists! Please enter a different name.";
     }
 }
