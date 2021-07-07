@@ -1,4 +1,5 @@
-﻿using FinBot.Domain.Interfaces;
+﻿using FinBot.App.Model;
+using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 using System;
 using System.Linq;
@@ -25,7 +26,9 @@ namespace FinBot.App.Services
             var userGetCollection = users.FirstOrDefault(u => u.ChatId == chatId);
             if (userGetCollection is not null)
             {
-                CurrentUser.User = userGetCollection;
+                CurrentUser.Id = userGetCollection.Id;
+                CurrentUser.ChatId = userGetCollection.ChatId;
+                CurrentUser.NickName = userGetCollection.NickName;
                 await _userDb.Update(userGetCollection, cancel);
                 return true;
             }

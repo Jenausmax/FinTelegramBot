@@ -8,7 +8,7 @@ namespace FinBot.Domain.Models
         /// <summary>
         /// true - Consumption, false - Income
         /// </summary>
-        public bool Role { get; set; }
+        public CategoryRole Role { get; set; }
         public bool IsDelete { get; set; }
 
         public int UserId { get; set; }
@@ -17,5 +17,12 @@ namespace FinBot.Domain.Models
         public List<Consumption> Consumptions { get; set; }
         public List<Income> Incomes { get; set; }
 
+    }
+
+    public enum CategoryRole
+    {
+        Income = 1,
+        Consumption = 2
+            
     }
 }

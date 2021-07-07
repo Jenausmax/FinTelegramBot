@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FinBot.App.Model;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -53,31 +54,39 @@ namespace FinBot.App.Services
             switch (type)
             {
                 case UpdateType.Message:
-                    await MessageCommand(_update);
                     var resMessageUser = await _userControl.SetUser(_update.Message.From.Id);
                     if (resMessageUser == false)
                     {
                         var user = new Domain.Models.User()
                         {
                             ChatId = _update.Message.From.Id,
-                            NickName = _update.Message.From.Username
+                            NickName = _update.Message.From.Username,
+                            IsDelete = false,
+                            FirstName = _update.Message.From.FirstName,
+                            LastName = _update.Message.From.LastName
                         };
                         await _userControl.Create(user);
+                        await _userControl.SetUser(user.ChatId);
                     }
+                    await MessageCommand(_update);
                     break;
 
                 case UpdateType.CallbackQuery:
-                    await CallbackMessageCommand(_update);
                     var resCallbackUser = await _userControl.SetUser(_update.CallbackQuery.From.Id);
                     if (resCallbackUser == false)
                     {
                         var user = new Domain.Models.User()
                         {
                             ChatId = _update.CallbackQuery.From.Id,
-                            NickName = _update.CallbackQuery.From.Username                                                       
+                            NickName = _update.CallbackQuery.From.Username,
+                            IsDelete = false,
+                            FirstName = _update.Message.From.FirstName,
+                            LastName = _update.Message.From.LastName
                         };
                         await _userControl.Create(user);
+                        await _userControl.SetUser(user.ChatId);
                     }
+                    await CallbackMessageCommand(_update);
                     break;
 
                 default:
@@ -228,6 +237,7 @@ namespace FinBot.App.Services
                     break;
 
                 default:
+                    var resMessageUser = await _userControl.SetUser(_update.Message.From.Id);
                     ParseCallbackInputText(update.CallbackQuery.Data);
                     break;
             }
@@ -240,8 +250,9 @@ namespace FinBot.App.Services
         private async Task<List<string>> RemoveCategoryList()
         {
             var categories = await _categoryDb.GetCollection();
+            var cat = categories.Where(e => e.UserId == CurrentUser.Id && e.IsDelete == false).ToList();
             var removeListCategoriesName = new List<string>();
-            foreach (var category in categories)
+            foreach (var category in cat)
             {
                 removeListCategoriesName.Add(category.Name);
             }
@@ -252,10 +263,10 @@ namespace FinBot.App.Services
 
         private async void ParseInputText(string text, CancellationToken cancel = default)
         {
-            var entity = new Category() { Name = text, UserId = CurrentUser.User.Id};
+            var entity = new Category() { Name = text, UserId = CurrentUser.Id, IsDelete = false};
             if (_incomeSetting)
             {
-                entity.Role = false;
+                entity.Role = CategoryRole.Income;
                 var categoryIncomes = await _categoryDb.GetCollection(cancel);
                 var inc = categoryIncomes.FirstOrDefault(e => e.Name == text);
                 if (inc == null)
@@ -271,7 +282,7 @@ namespace FinBot.App.Services
             }
             if (_consumptionSetting)
             {
-                entity.Role = true;
+                entity.Role = CategoryRole.Consumption;
                var categoryConsumptions = await _categoryDb.GetCollection(cancel);
                var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == text);
                if (consumption == null)

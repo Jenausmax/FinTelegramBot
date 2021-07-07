@@ -9,10 +9,6 @@ namespace FinBot.Domain.Models
 {
     public class User : Entity
     {
-        //public User()
-        //{
-            
-        //}
         public long ChatId { get; set; }
         public string NickName { get; set; }
         public string FirstName { get; set; }
