@@ -1,4 +1,5 @@
-﻿using FinBot.App.Phrases;
+﻿using System;
+using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 using System.Collections.Generic;
@@ -178,7 +179,7 @@ namespace FinBot.App.Services
                                 callBack: default,
                                 key: default,
                                 keyCollection: default,
-                                collectionButtonRows: RemoveCategoryListList().Result));
+                                collectionButtonRows: CategoryListCollection().Result));
                     _flagRemoveCategory = true;
                     break;
                 #endregion
@@ -217,8 +218,26 @@ namespace FinBot.App.Services
                             keyCollection: BotPhrases.HomeMenu()));
                     break;
                 case "Income":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.IncomeCategory,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: default,
+                            collectionButtonRows: CategoryListCollection(CategoryRole.Income).Result));
+                    _flagIncome = true;
                     break;
                 case "Consumption":
+                    await _updateService.EchoTextMessageAsync(
+                        update,
+                        BotPhrases.ConsumptionCategory,
+                        _keyboardBotCreate.CreateInlineKeyboard(
+                            callBack: default,
+                            key: default,
+                            keyCollection: default,
+                            collectionButtonRows: CategoryListCollection(CategoryRole.Consumption).Result));
+                    _flagConsumption = true;
                     break;
                 case "Balance":
                     break;
@@ -245,25 +264,38 @@ namespace FinBot.App.Services
         /// Метод формирования списка категорий на удаление
         /// </summary>
         /// <returns></returns>
-        private async Task<List<List<string>>> RemoveCategoryListList()
+        private async Task<List<List<string>>> CategoryListCollection(CategoryRole role = default)
         {
             var categories = await _categoryDb.GetCollection();
             var cat = categories.Where(e => e.UserId == CurrentUser.Id && e.IsDelete == false).ToList();
 
-                var catListString = new List<string>();
-                foreach (var category in cat)
-                {
-                    catListString.Add(category.Name);
-                }
+            if (role == CategoryRole.Income)
+            {
+                var catInc = cat.Where(e => e.Role == CategoryRole.Income).ToList();
+                cat = catInc;
+            }
 
-                var res = catListString
+            if (role == CategoryRole.Consumption)
+            {
+                var catCon = cat.Where(e => e.Role == CategoryRole.Consumption).ToList();
+                cat = catCon;
+            }
+
+            var catListString = new List<string>();
+            foreach (var category in cat)
+            {
+                catListString.Add(category.Name);
+            }
+
+            var res = catListString
                             .Select((x, y) => new { Index = y, Value = x })
                             .GroupBy(x => x.Index / 2)
                             .Select(x => x.Select(y => y.Value).ToList())
                             .ToList();
 
-                return res;
+            return res;
         }
+
 
         /// <summary>
         /// Метод парсинга текста в message
@@ -305,6 +337,69 @@ namespace FinBot.App.Services
                    await SendingShortCommand(BotPhrases.CategoryExist);
                }
             }
+
+            double res = 0;
+            var boolParse = double.TryParse(text, out res);
+
+            if (_flagIncome)
+            {
+                if (boolParse)
+                {
+                    var income = new Income()
+                    {
+                        IsDelete = false, 
+                        Date = DateTime.Now, 
+                        Money = res, 
+                        UserId = CurrentUser.Id, 
+                        CategoryId = CurrentCategoryIncome.Id
+                    };
+
+                    if (await _incomeDb.Create(income, cancel))
+                    {
+                        await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                    }
+                    else
+                    {
+                        await SendingShortCommand(BotPhrases.SumAddingError);
+                    }
+
+                    _flagIncome = false;
+                }
+                else
+                {
+                    await SendingShortCommand(BotPhrases.SumAddingError);
+                }
+            }
+
+            if (_flagConsumption)
+            {
+                if (boolParse)
+                {
+                    var consumption = new Consumption()
+                    {
+                        IsDelete = false,
+                        Date = DateTime.Now,
+                        Money = res,
+                        UserId = CurrentUser.Id,
+                        CategoryId = CurrentCategoryIncome.Id
+                    };
+
+                    if (await _consumptionDb.Create(consumption, cancel))
+                    {
+                        await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                    }
+                    else
+                    {
+                        await SendingShortCommand(BotPhrases.SumAddingError);
+                    }
+
+                    _flagConsumption = false;
+                }
+                else
+                {
+                    await SendingShortCommand(BotPhrases.SumAddingError);
+                }
+            }
         }
 
         /// <summary>
@@ -313,34 +408,35 @@ namespace FinBot.App.Services
         /// <param name="response"></param>
         private async void ParseCallbackInputText(string response)
         {
-            if (_flagRemoveCategory)
+            var categories = await _categoryDb.GetCollection();
+            var category = categories.FirstOrDefault(e => e.Name == response);
+            if (category is not null)
             {
-                var categories = await _categoryDb.GetCollection();
-                var category = categories.FirstOrDefault(e => e.Name == response);
-                if(category is not null)
+                if (_flagRemoveCategory)
                 {
                     category.IsDelete = true;
                     await _categoryDb.Update(category);
                     _flagRemoveCategory = false;
                     await SendingShortCommand(BotPhrases.UpdateSuccessful);
                 }
-                else
+
+                if (_flagIncome)
                 {
-                    await SendingShortCommand(BotPhrases.CategoryExist);
+                    CurrentCategoryIncome.Id = category.Id;
+                    CurrentCategoryIncome.Name = category.Name;
+                    await SendingShortCommand(BotPhrases.EnterTheAmount);
+                }
+
+                if (_flagConsumption)
+                {
+                    CurrentCategoryConsumption.Id = category.Id;
+                    CurrentCategoryConsumption.Name = category.Name;
+                    await SendingShortCommand(BotPhrases.EnterTheAmount);
                 }
             }
-        }
-
-        private void ParseInputMoney(int idCategory, string money)
-        {
-            if (_flagIncome)
+            else
             {
-                _flagIncome = false;
-            }
-
-            if (_flagConsumption)
-            {
-                _flagConsumption = false;
+                await SendingShortCommand(BotPhrases.CategoryExist);
             }
         }
 

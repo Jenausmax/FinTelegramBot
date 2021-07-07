@@ -23,6 +23,10 @@ namespace FinBot.App.Phrases
         internal static string UpdateSuccessful = "update successful!";
         internal static string CategoryExist = "This category exists! Please enter a different name.";
         internal static string EnterCategoryName = "Enter category name: ";
+        internal static string IncomeCategory = "Income category";
+        internal static string ConsumptionCategory = "Consumption category";
+        internal static string EnterTheAmount = "Enter the amount";
+        internal static string SumAddingError = "Sum adding error";
 
         /// <summary>
         /// Полное командное меню для чата.
