@@ -17,10 +17,62 @@ namespace FinBot.App.Phrases
                                       "Для записи Расхода введите команду Consumption. " +
                                       "Для просмотра статистики введите команду Balance.";
 
-        internal static string AddSettingMenu = "Add Category - Добавить новую категорию; Remove Category - Удалить категорию(пока не реализовано).";
-        internal static string HomeMenu = "Setting - Можно добавить или удалить категорию; Help - помощь по использованию бота.";
+        internal static string AddSettingMenuHelp = "Add Category - Добавить новую категорию; Remove Category - Удалить категорию(пока не реализовано).";
+        internal static string HomeMenuHelp = "Setting - Можно добавить или удалить категорию; Help - помощь по использованию бота.";
 
         internal static string UpdateSuccessful = "update successful!";
         internal static string CategoryExist = "This category exists! Please enter a different name.";
+        internal static string EnterCategoryName = "Enter category name: ";
+
+        /// <summary>
+        /// Полное командное меню для чата.
+        /// </summary>
+        /// <returns></returns>
+        internal static List<string> AllCommandMenu() //Командная клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Home",
+                "Income",
+                "Consumption",
+                "Balance"
+            };
+            return start;
+        }
+
+        internal static List<string> SettingMenu() //Setting клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Add category",
+                "Remove category"
+            };
+            return start;
+        }
+
+        internal static List<string> AddSettingMenu() //Add Setting клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Income category add",
+                "Consumption category add"
+            };
+            return start;
+        }
+
+        internal static List<string> HomeMenu() //Add Setting клавиатура
+        {
+            var start = new List<string>()
+            {
+                "Setting",
+                "Help"
+            };
+            return start;
+        }
+
+        internal static string Back() //button back
+        {
+            return " <---Back Home";
+        }
     }
 }

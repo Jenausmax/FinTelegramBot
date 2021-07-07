@@ -12,10 +12,10 @@ namespace FinBot.App.Services
 {
     public class CommandService : ICommandBot
     {
-        private IBaseRepositoryDb<Category> _categoryDb;
-        private IBaseRepositoryDb<Consumption> _consumptionDb;
-        private IBaseRepositoryDb<Income> _incomeDb;
-        private IUserControl _userControl;
+        private readonly IBaseRepositoryDb<Category> _categoryDb;
+        private readonly IBaseRepositoryDb<Consumption> _consumptionDb;
+        private readonly IBaseRepositoryDb<Income> _incomeDb;
+        private readonly IUserControl _userControl;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
         private readonly IUpdateService _updateService;
@@ -100,7 +100,7 @@ namespace FinBot.App.Services
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: AllCommandMenu()));
+                            keyCollection: BotPhrases.AllCommandMenu()));
                     break;
 
                 //TODO Обдумать а нужно ли это командное меню
@@ -138,7 +138,7 @@ namespace FinBot.App.Services
                         BotPhrases.Help,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             keyCollection: default,
-                            key: Back()));
+                            key: BotPhrases.Back()));
                     break;
 
                 case "Setting":
@@ -148,7 +148,7 @@ namespace FinBot.App.Services
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: SettingMenu()));
+                            keyCollection: BotPhrases.SettingMenu()));
                     break;
 
                 #endregion
@@ -158,11 +158,11 @@ namespace FinBot.App.Services
                 case "Add category":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        BotPhrases.AddSettingMenu,
+                        BotPhrases.AddSettingMenuHelp,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: AddSettingMenu()));
+                            keyCollection: BotPhrases.AddSettingMenu()));
                     break;
                 case "Remove category":
                     await _updateService.EchoTextMessageAsync(
@@ -171,7 +171,7 @@ namespace FinBot.App.Services
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: RemoveCategoryList()));
+                            keyCollection: RemoveCategoryList().Result));
                     _flagRemoveCategory = true;
                     break;
                 #endregion
@@ -179,18 +179,18 @@ namespace FinBot.App.Services
                 #region Submenu Add Category
 
                 //подменю Add Category
-                case "Income Setting":
+                case "Income category add":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        InputCategory(),
+                        BotPhrases.EnterCategoryName,
                         keyboard: null);
                     _incomeSetting = true;
                     break;
 
-                case "Consumption Setting":
+                case "Consumption category add":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        InputCategory(),
+                        BotPhrases.EnterCategoryName,
                         keyboard: null);
                     _consumptionSetting = true;
                     break;
@@ -203,11 +203,11 @@ namespace FinBot.App.Services
                 case "Home":
                     await _updateService.EchoTextMessageAsync(
                         update,
-                        BotPhrases.HomeMenu,
+                        BotPhrases.HomeMenuHelp,
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: HomeMenu()));
+                            keyCollection: BotPhrases.HomeMenu()));
                     break;
                 case "Income":
                     break;
@@ -224,7 +224,7 @@ namespace FinBot.App.Services
                         _keyboardBotCreate.CreateInlineKeyboard(
                             callBack: default,
                             key: default,
-                            keyCollection: AllCommandMenu()));
+                            keyCollection: BotPhrases.AllCommandMenu()));
                     break;
 
                 default:
@@ -233,77 +233,20 @@ namespace FinBot.App.Services
             }
         }
 
-
-
-        /// <summary>
-        /// Полное командное меню для чата.
-        /// </summary>
-        /// <returns></returns>
-        private List<string> AllCommandMenu() //Командная клавиатура
-        {
-            var start = new List<string>()
-            {
-                "Home",
-                "Income",
-                "Consumption",
-                "Balance"
-            };
-            return start;
-        }
-
-
-        private List<string> SettingMenu() //Setting клавиатура
-        {
-            var start = new List<string>()
-            {
-                "Add category",
-                "Remove category"
-            };
-            return start;
-        }
-
-        private List<string> AddSettingMenu() //Add Setting клавиатура
-        {
-            var start = new List<string>()
-            {
-                "Income Setting",
-                "Consumption Setting"
-            };
-            return start;
-        }
-
-        private List<string> HomeMenu() //Add Setting клавиатура
-        {
-            var start = new List<string>()
-            {
-                "Setting",
-                "Help"
-            };
-            return start;
-        }
-
-        private string Back() //button back
-        {
-            return " <---Back Home";
-        }
-
-        private string InputCategory() => "Введите название категории: ";
-
         /// <summary>
         /// Метод формирования списка категорий на удаление
         /// </summary>
         /// <returns></returns>
-        private List<string> RemoveCategoryList()
+        private async Task<List<string>> RemoveCategoryList()
         {
-            //var categories = _db.GetCollectionCategories();
-            //var removeListCategoriesName = new List<string>();
-            //foreach (var category in categories)
-            //{
-            //    removeListCategoriesName.Add(category.Name);
-            //}
+            var categories = await _categoryDb.GetCollection();
+            var removeListCategoriesName = new List<string>();
+            foreach (var category in categories)
+            {
+                removeListCategoriesName.Add(category.Name);
+            }
 
-            //return removeListCategoriesName;
-            return null;
+            return removeListCategoriesName;
         }
 
 
@@ -326,7 +269,6 @@ namespace FinBot.App.Services
                     await SendingShortCommand(BotPhrases.CategoryExist);
                 }
             }
-
             if (_consumptionSetting)
             {
                 entity.Role = true;
