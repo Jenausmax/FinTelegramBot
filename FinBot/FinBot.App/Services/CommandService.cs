@@ -174,13 +174,14 @@ namespace FinBot.App.Services
                             keyCollection: BotPhrases.AddSettingMenu()));
                     break;
                 case "Remove category":
-                    await _updateService.EchoTextMessageAsync(
-                        update,
-                        "Категории для удаления: ",
-                        _keyboardBotCreate.CreateInlineKeyboard(
-                            callBack: default,
-                            key: default,
-                            keyCollection: RemoveCategoryList().Result));
+                    //await _updateService.EchoTextMessageAsync(
+                    //    update,
+                    //    "Категории для удаления: ",
+                    //    _keyboardBotCreate.CreateInlineKeyboard(
+                    //        callBack: default,
+                    //        key: default,
+                    //        keyCollection: RemoveCategoryList().Result));
+                    await RemoveCategoryList();
                     _flagRemoveCategory = true;
                     break;
                 #endregion
@@ -257,6 +258,36 @@ namespace FinBot.App.Services
                 removeListCategoriesName.Add(category.Name);
             }
 
+            if (cat.Count > 4)
+            {
+                var res = cat
+                    .Select((x, y) => new { Index = y, Value = x })
+                    .GroupBy(x => x.Index / 4)
+                    .Select(x => x.Select(y => y.Value).ToList())
+                    .ToList();
+
+                for (int i = 0; i < res.Count; i++)
+                {
+                    foreach (var re in res)
+                    {
+                        var coll = new List<string>();
+                        foreach (var category in re)
+                        {
+                            coll.Add(category.Name);
+                        }
+                        //TODO подумать над этим
+                        //_update.CallbackQuery.Data = "";
+                        _updateService.EchoTextMessageAsync(
+                            _update,
+                            " ",
+                            _keyboardBotCreate.CreateInlineKeyboard(
+                                callBack: default,
+                                key: default,
+                                keyCollection: coll));
+                    }
+                }
+            }
+            
             return removeListCategoriesName;
         }
 
