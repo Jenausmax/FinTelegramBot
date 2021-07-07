@@ -7,6 +7,7 @@ namespace FinBot.Domain.Interfaces
     {
         InlineKeyboardMarkup CreateInlineKeyboard(string callBack = default, string key = default, 
             IList<string> keyCollection = default, 
-            IDictionary<string,string> keyCallbackCollection = default);
+            IDictionary<string,string> keyCallbackCollection = default,
+            List<List<string>> collectionButtonRows = default);
     }
 }

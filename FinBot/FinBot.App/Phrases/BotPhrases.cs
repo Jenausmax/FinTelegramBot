@@ -72,7 +72,7 @@ namespace FinBot.App.Phrases
 
         internal static string Back() //button back
         {
-            return " <---Back Home";
+            return "<---Back Home";
         }
     }
 }

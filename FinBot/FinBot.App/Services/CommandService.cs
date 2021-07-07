@@ -95,8 +95,6 @@ namespace FinBot.App.Services
             }
         }
 
-
-
         private async Task MessageCommand(Update update)
         {
             var message = update.Message.Text;
@@ -131,7 +129,6 @@ namespace FinBot.App.Services
                     break;
             }
         }
-
 
 
         private async Task CallbackMessageCommand(Update update)
@@ -174,14 +171,14 @@ namespace FinBot.App.Services
                             keyCollection: BotPhrases.AddSettingMenu()));
                     break;
                 case "Remove category":
-                    //await _updateService.EchoTextMessageAsync(
-                    //    update,
-                    //    "Категории для удаления: ",
-                    //    _keyboardBotCreate.CreateInlineKeyboard(
-                    //        callBack: default,
-                    //        key: default,
-                    //        keyCollection: RemoveCategoryList().Result));
-                    await RemoveCategoryList();
+                    await _updateService.EchoTextMessageAsync(
+                            update,
+                            "Категории для удаления: ",
+                            _keyboardBotCreate.CreateInlineKeyboard(
+                                callBack: default,
+                                key: default,
+                                keyCollection: default,
+                                collectionButtonRows: RemoveCategoryListList().Result));
                     _flagRemoveCategory = true;
                     break;
                 #endregion
@@ -238,7 +235,7 @@ namespace FinBot.App.Services
                     break;
 
                 default:
-                    var resMessageUser = await _userControl.SetUser(_update.Message.From.Id);
+                    var resMessageUser = await _userControl.SetUser(_update.CallbackQuery.From.Id);
                     ParseCallbackInputText(update.CallbackQuery.Data);
                     break;
             }
@@ -248,50 +245,31 @@ namespace FinBot.App.Services
         /// Метод формирования списка категорий на удаление
         /// </summary>
         /// <returns></returns>
-        private async Task<List<string>> RemoveCategoryList()
+        private async Task<List<List<string>>> RemoveCategoryListList()
         {
             var categories = await _categoryDb.GetCollection();
             var cat = categories.Where(e => e.UserId == CurrentUser.Id && e.IsDelete == false).ToList();
-            var removeListCategoriesName = new List<string>();
-            foreach (var category in cat)
-            {
-                removeListCategoriesName.Add(category.Name);
-            }
 
-            if (cat.Count > 4)
-            {
-                var res = cat
-                    .Select((x, y) => new { Index = y, Value = x })
-                    .GroupBy(x => x.Index / 4)
-                    .Select(x => x.Select(y => y.Value).ToList())
-                    .ToList();
-
-                for (int i = 0; i < res.Count; i++)
+                var catListString = new List<string>();
+                foreach (var category in cat)
                 {
-                    foreach (var re in res)
-                    {
-                        var coll = new List<string>();
-                        foreach (var category in re)
-                        {
-                            coll.Add(category.Name);
-                        }
-                        //TODO подумать над этим
-                        //_update.CallbackQuery.Data = "";
-                        _updateService.EchoTextMessageAsync(
-                            _update,
-                            " ",
-                            _keyboardBotCreate.CreateInlineKeyboard(
-                                callBack: default,
-                                key: default,
-                                keyCollection: coll));
-                    }
+                    catListString.Add(category.Name);
                 }
-            }
-            
-            return removeListCategoriesName;
+
+                var res = catListString
+                            .Select((x, y) => new { Index = y, Value = x })
+                            .GroupBy(x => x.Index / 2)
+                            .Select(x => x.Select(y => y.Value).ToList())
+                            .ToList();
+
+                return res;
         }
 
-
+        /// <summary>
+        /// Метод парсинга текста в message
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="cancel"></param>
         private async void ParseInputText(string text, CancellationToken cancel = default)
         {
             var entity = new Category() { Name = text, UserId = CurrentUser.Id, IsDelete = false};
@@ -329,18 +307,27 @@ namespace FinBot.App.Services
             }
         }
 
-        private void ParseCallbackInputText(string response)
+        /// <summary>
+        /// Метод парсинга Data в келбеке.
+        /// </summary>
+        /// <param name="response"></param>
+        private async void ParseCallbackInputText(string response)
         {
             if (_flagRemoveCategory)
             {
-                //var category = _db.GetCategory(response);
-                //if (category != null)
-                //{
-                //    _db.DeleteCategory(category.Id);
-                //    SendingShortCommand("Выполнено!");
-                //}
-
-                //_flagRemoveCategory = false;
+                var categories = await _categoryDb.GetCollection();
+                var category = categories.FirstOrDefault(e => e.Name == response);
+                if(category is not null)
+                {
+                    category.IsDelete = true;
+                    await _categoryDb.Update(category);
+                    _flagRemoveCategory = false;
+                    await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                }
+                else
+                {
+                    await SendingShortCommand(BotPhrases.CategoryExist);
+                }
             }
         }
 
