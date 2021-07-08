@@ -6,6 +6,7 @@ namespace FinBot.Domain.Models
     {
         public string Name { get; set; }
         public string FileidTelegram { get; set; }
+        public string FileidUnique { get; set; }
         public StickerRole? StickerRole { get; set; }
         public bool IsAnimated { get; set; }
         public string Emoji { get; set; }
@@ -18,6 +19,7 @@ namespace FinBot.Domain.Models
         GoodMorning = 2,
         GoodNight = 3,
         Good = 4,
-        Error = 5
+        Error = 5,
+        none = 6
     }
 }

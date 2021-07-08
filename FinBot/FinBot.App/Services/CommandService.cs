@@ -17,6 +17,7 @@ namespace FinBot.App.Services
         private readonly IBaseRepositoryDb<Category> _categoryDb;
         private readonly IBaseRepositoryDb<Consumption> _consumptionDb;
         private readonly IBaseRepositoryDb<Income> _incomeDb;
+        private readonly IBaseRepositoryDb<TelegramSticker> _stickerDb;
         private readonly IUserControl _userControl;
         private Update _update;
         private readonly IKeyboardBotCreate _keyboardBotCreate;
@@ -32,7 +33,8 @@ namespace FinBot.App.Services
             IUpdateService updateService, 
             IBaseRepositoryDb<Category> categoryDb, 
             IBaseRepositoryDb<Consumption> cons, 
-            IBaseRepositoryDb<Income> inc, 
+            IBaseRepositoryDb<Income> inc,
+            IBaseRepositoryDb<TelegramSticker> sticker,
             IUserControl userControl)
         {
             _keyboardBotCreate = keyboardBotCreate;
@@ -40,6 +42,7 @@ namespace FinBot.App.Services
             _categoryDb = categoryDb;
             _consumptionDb = cons;
             _incomeDb = inc;
+            _stickerDb = sticker;
             _userControl = userControl;
         }
 
@@ -72,7 +75,22 @@ namespace FinBot.App.Services
 
                     if (_update.Message.Sticker != null) //обработка стикеров 
                     {
+                        var stickerNow = _update.Message.Sticker;
+                        var stickers = await _stickerDb.GetCollection();
+                        var sticker = stickers.FirstOrDefault(e => e.FileidUnique == stickerNow.FileUniqueId);
+                        if (sticker == null)
+                        {
+                            await _stickerDb.Create(new TelegramSticker()
+                            {
+                                Name = stickerNow.SetName,
+                                FileidTelegram = stickerNow.FileId,
+                                Emoji = stickerNow.Emoji,
+                                IsAnimated = stickerNow.IsAnimated,
+                                StickerRole = StickerRole.none,
+                                FileidUnique = stickerNow.FileUniqueId
 
+                            });
+                        }
                     }
 
                     await MessageCommand(_update);
