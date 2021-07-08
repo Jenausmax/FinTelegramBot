@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace FinBot.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("")]
     [ApiController]
     public class UpdateController : ControllerBase
     {

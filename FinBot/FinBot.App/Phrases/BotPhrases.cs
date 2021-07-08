@@ -36,10 +36,11 @@ namespace FinBot.App.Phrases
         {
             var start = new List<string>()
             {
-                "Home",
+                
                 "Income",
                 "Consumption",
-                "Balance"
+                "Balance",
+                "Menu"
             };
             return start;
         }
@@ -49,7 +50,8 @@ namespace FinBot.App.Phrases
             var start = new List<string>()
             {
                 "Add category",
-                "Remove category"
+                "Remove category",
+                "<---Back Home"
             };
             return start;
         }
@@ -59,7 +61,8 @@ namespace FinBot.App.Phrases
             var start = new List<string>()
             {
                 "Income category add",
-                "Consumption category add"
+                "Consumption category add",
+                "<---Back Home"
             };
             return start;
         }
@@ -69,7 +72,8 @@ namespace FinBot.App.Phrases
             var start = new List<string>()
             {
                 "Setting",
-                "Help"
+                "Help",
+                "<---Back Home"
             };
             return start;
         }

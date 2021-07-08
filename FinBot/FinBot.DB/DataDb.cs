@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using FinBot.Domain.Models;
+﻿using FinBot.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinBot.DB
@@ -20,6 +14,8 @@ namespace FinBot.DB
         public DbSet<Category> Categories { get; set; }
         public DbSet<Consumption> Consumptions { get; set; }
         public DbSet<Income> Incomes { get; set; }
+        public DbSet<TelegramSticker> TelegramStickers { get; set; }
+        public DbSet<LogBot> LogBots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +26,9 @@ namespace FinBot.DB
 
             modelBuilder.Entity<Income>()
                 .HasIndex(x => x.Date);
+
+            modelBuilder.Entity<LogBot>()
+                .HasIndex(x => x.Time);
         }
     }
 }

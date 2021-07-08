@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
-using FinBot.Domain.Interfaces;
+﻿using FinBot.Domain.Interfaces;
+using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FinBot.App.Services
@@ -65,8 +66,23 @@ namespace FinBot.App.Services
             {
                 return;
             }
+        }
 
-
+        /// <summary>
+        /// Отправка ботом стикеров.
+        /// </summary>
+        /// <param name="update"></param>
+        /// <param name="messageStickerFileId">Строка fileId указывающая на телеграм стикер</param>
+        /// <returns></returns>
+        public async Task EchoSendStickerAsync(Update update, string messageStickerFileId)
+        {
+            if (update.Type == UpdateType.Message)
+            {
+                if (update.Message != null)
+                {
+                    await _botService.Client.SendStickerAsync(update.Message.Chat.Id, new InputOnlineFile(messageStickerFileId));
+                }
+            }
         }
     }
 }

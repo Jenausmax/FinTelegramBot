@@ -1,12 +1,12 @@
-﻿using System;
+﻿using FinBot.App.Model;
 using FinBot.App.Phrases;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FinBot.App.Model;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -69,6 +69,12 @@ namespace FinBot.App.Services
                         await _userControl.Create(user);
                         await _userControl.SetUser(user.ChatId);
                     }
+
+                    if (_update.Message.Sticker != null) //обработка стикеров 
+                    {
+
+                    }
+
                     await MessageCommand(_update);
                     break;
 
@@ -208,7 +214,7 @@ namespace FinBot.App.Services
                 #region All Menu
 
                 //основное меню
-                case "Home":
+                case "Menu":
                     await _updateService.EchoTextMessageAsync(
                         update,
                         BotPhrases.HomeMenuHelp,
@@ -292,7 +298,7 @@ namespace FinBot.App.Services
                             .GroupBy(x => x.Index / 2)
                             .Select(x => x.Select(y => y.Value).ToList())
                             .ToList();
-
+            res.Add(new List<string>(){ "<---Back Home" });
             return res;
         }
 
@@ -305,7 +311,7 @@ namespace FinBot.App.Services
         private async void ParseInputText(string text, CancellationToken cancel = default)
         {
             var entity = new Category() { Name = text, UserId = CurrentUser.Id, IsDelete = false};
-            if (_incomeSetting)
+            if (_incomeSetting)//создание категории Income
             {
                 entity.Role = CategoryRole.Income;
                 var categoryIncomes = await _categoryDb.GetCollection(cancel);
@@ -313,7 +319,7 @@ namespace FinBot.App.Services
                 if (inc == null)
                 {
                     await _categoryDb.Create(entity, cancel);
-                    await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                    await SendingShortCommand(BotPhrases.UpdateSuccessful, BotPhrases.Back());
                     _incomeSetting = false;
                 }
                 else
@@ -321,7 +327,7 @@ namespace FinBot.App.Services
                     await SendingShortCommand(BotPhrases.CategoryExist);
                 }
             }
-            if (_consumptionSetting)
+            if (_consumptionSetting) //создание категории Consumption
             {
                 entity.Role = CategoryRole.Consumption;
                var categoryConsumptions = await _categoryDb.GetCollection(cancel);
@@ -329,7 +335,7 @@ namespace FinBot.App.Services
                if (consumption == null)
                {
                    await _categoryDb.Create(entity, cancel);
-                   await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                   await SendingShortCommand(BotPhrases.UpdateSuccessful, BotPhrases.Back());
                    _consumptionSetting = false;
                }
                else
@@ -356,7 +362,7 @@ namespace FinBot.App.Services
 
                     if (await _incomeDb.Create(income, cancel))
                     {
-                        await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                        await SendingShortCommand(BotPhrases.UpdateSuccessful, BotPhrases.Back());
                     }
                     else
                     {
@@ -386,7 +392,7 @@ namespace FinBot.App.Services
 
                     if (await _consumptionDb.Create(consumption, cancel))
                     {
-                        await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                        await SendingShortCommand(BotPhrases.UpdateSuccessful, BotPhrases.Back());
                     }
                     else
                     {
@@ -417,7 +423,7 @@ namespace FinBot.App.Services
                     category.IsDelete = true;
                     await _categoryDb.Update(category);
                     _flagRemoveCategory = false;
-                    await SendingShortCommand(BotPhrases.UpdateSuccessful);
+                    await SendingShortCommand(BotPhrases.UpdateSuccessful, BotPhrases.Back());
                 }
 
                 if (_flagIncome)
@@ -445,10 +451,10 @@ namespace FinBot.App.Services
         /// Метод отправки короткого сообщение для пользователя о выполнении.
         /// </summary>
         /// <param name="message"></param>
-        private async Task SendingShortCommand(string message)
+        private async Task SendingShortCommand(string message, string messageBack = default)
         {
             await _updateService.EchoTextMessageAsync(_update,
-                message);
+                message, _keyboardBotCreate.CreateInlineKeyboard(key: messageBack));
         }
 
     }
