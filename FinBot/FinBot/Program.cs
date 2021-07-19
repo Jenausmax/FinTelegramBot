@@ -21,6 +21,7 @@ namespace FinBot
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseShutdownTimeout(TimeSpan.FromMinutes(1));
                 });
     }
 }

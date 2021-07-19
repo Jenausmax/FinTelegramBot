@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31410.414
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinBot.WebApi", "FinBot\FinBot.WebApi.csproj", "{40E93081-08E6-4113-854E-92B9E378DFA3}"
 EndProject
@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F3AD0CF6-E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinBot.Services.Test", "FinBot.Services.Test\FinBot.Services.Test.csproj", "{B038DBA3-D273-42BF-8398-3147CD945CDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.Services.xUnitTests", "FinBot.Services.xUnitTests\FinBot.Services.xUnitTests.csproj", "{3EE4B621-5193-4BBF-B61C-E64896CFA0E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinBot.Services.xUnitTests", "FinBot.Services.xUnitTests\FinBot.Services.xUnitTests.csproj", "{3EE4B621-5193-4BBF-B61C-E64896CFA0E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinBot.Maintenance", "FinBot.Maintenance\FinBot.Maintenance.csproj", "{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{3EE4B621-5193-4BBF-B61C-E64896CFA0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EE4B621-5193-4BBF-B61C-E64896CFA0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EE4B621-5193-4BBF-B61C-E64896CFA0E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{E7DA1657-2A27-406A-BBAE-3E4DE10EC633} = {63757058-4062-4C9B-BC98-DB33F006BA57}
 		{B038DBA3-D273-42BF-8398-3147CD945CDC} = {F3AD0CF6-ECAC-4061-B890-95343E329595}
 		{3EE4B621-5193-4BBF-B61C-E64896CFA0E6} = {F3AD0CF6-ECAC-4061-B890-95343E329595}
+		{9C856C5D-EDB8-4F1D-8DFD-8F35C15B9662} = {DA5221E3-8C64-42BD-9809-63B7162D977E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1AAAD6DA-E4B7-49C4-9B67-CFAEA1E048FF}
