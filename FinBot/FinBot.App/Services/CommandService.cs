@@ -275,6 +275,11 @@ namespace FinBot.App.Services
                             callBack: default,
                             key: default,
                             keyCollection: BotPhrases.AllCommandMenu()));
+                    _flagIncome = false;
+                    _flagConsumption = false;
+                    _incomeSetting = false;
+                    _consumptionSetting = false;
+                    _flagRemoveCategory = false;
                     break;
 
                 default:
