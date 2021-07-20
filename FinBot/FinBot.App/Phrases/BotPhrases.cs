@@ -20,14 +20,15 @@ namespace FinBot.App.Phrases
         internal static string AddSettingMenuHelp = "Add Category - Добавить новую категорию; Remove Category - Удалить категорию(пока не реализовано).";
         internal static string HomeMenuHelp = "Setting - Можно добавить или удалить категорию; Help - помощь по использованию бота.";
 
-        internal static string UpdateSuccessful = "update successful!";
+        internal static string UpdateSuccessful = "Сохранение успешно!";
         internal static string CategoryExist = "This category exists! Please enter a different name.";
-        internal static string EnterCategoryName = "Enter category name: ";
+        internal static string EnterCategoryName = "Введите название категории: ";
         internal static string IncomeCategory = "Income category";
         internal static string ConsumptionCategory = "Consumption category";
-        internal static string EnterTheAmount = "Enter the amount";
-        internal static string SumAddingError = "Sum adding error";
+        internal static string EnterTheAmount = "Введите сумму";
+        internal static string SumAddingError = "Ошибка! Введите корректную сумму.";
         public static string Reminder = "Не забудь вписать свои траты!";
+        public static string NotCategory = "Нет списка для отображения!";
 
         /// <summary>
         /// Полное командное меню для чата.

@@ -316,6 +316,8 @@ namespace FinBot.App.Services
                 catListString.Add(category.Name);
             }
 
+            if (catListString.Count == 0) await SendingShortCommand(BotPhrases.NotCategory);
+
             var res = catListString
                             .Select((x, y) => new { Index = y, Value = x })
                             .GroupBy(x => x.Index / 2)
@@ -333,12 +335,15 @@ namespace FinBot.App.Services
         /// <param name="cancel"></param>
         private async void ParseInputText(string text, CancellationToken cancel = default)
         {
-            var entity = new Category() { Name = text, UserId = CurrentUser.Id, IsDelete = false};
+            var entity = new Category() {UserId = CurrentUser.Id, IsDelete = false};
             if (_incomeSetting)//создание категории Income
             {
                 entity.Role = CategoryRole.Income;
+                entity.Name = text + "(Inc)";
                 var categoryIncomes = await _categoryDb.GetCollection(cancel);
-                var inc = categoryIncomes.FirstOrDefault(e => e.Name == text);
+                var inc = categoryIncomes.FirstOrDefault(e => e.Name == text && 
+                                                              e.IsDelete == false && 
+                                                              e.Role == entity.Role);
                 if (inc == null)
                 {
                     await _categoryDb.Create(entity, cancel);
@@ -351,10 +356,13 @@ namespace FinBot.App.Services
                 }
             }
             if (_consumptionSetting) //создание категории Consumption
-            {
-                entity.Role = CategoryRole.Consumption;
+            { 
+               entity.Role = CategoryRole.Consumption;
+               entity.Name = text + "(Con)";
                var categoryConsumptions = await _categoryDb.GetCollection(cancel);
-               var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == text);
+               var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == text && 
+                                                                          e.IsDelete == false && 
+                                                                          e.Role == entity.Role);
                if (consumption == null)
                {
                    await _categoryDb.Create(entity, cancel);
@@ -443,6 +451,20 @@ namespace FinBot.App.Services
             {
                 if (_flagRemoveCategory)
                 {
+                    var incomes = await _incomeDb.GetCollection();
+                    var inc = incomes.Where(i => i.CategoryId == category.Id);
+                    foreach (var income in inc)
+                    {
+                        income.IsDelete = true;
+                        await _incomeDb.Update(income);
+                    }
+                    var consCollection = await _consumptionDb.GetCollection();
+                    var cons = consCollection.Where(i => i.CategoryId == category.Id);
+                    foreach (var consumption in cons)
+                    {
+                        consumption.IsDelete = true;
+                        await _consumptionDb.Update(consumption);
+                    }
                     category.IsDelete = true;
                     await _categoryDb.Update(category);
                     _flagRemoveCategory = false;
