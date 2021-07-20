@@ -25,6 +25,8 @@ namespace FinBot.App.Services
         /// <returns></returns>
         public async Task EchoTextMessageAsync(Update update, string message, InlineKeyboardMarkup keyboard = default)
         {
+            if(update == null) return;
+
             if (update.Type == UpdateType.Message) //обработка текстовых сообщений
             {
                 if (update.Message != null)

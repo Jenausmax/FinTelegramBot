@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FinBot.App\FinBot.App.csproj" />
     <ProjectReference Include="..\FinBot.DB\FinBot.DB.csproj" />
+    <ProjectReference Include="..\FinBot.Maintenance\FinBot.Maintenance.csproj" />
   </ItemGroup>
 
   <ItemGroup>

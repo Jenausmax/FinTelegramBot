@@ -1,9 +1,12 @@
+using System;
 using FinBot.App.Services;
 using FinBot.DB;
 using FinBot.DB.Repositories;
 using FinBot.Domain.Interfaces;
 using FinBot.Domain.Models;
 using FinBot.Domain.Models.Entities;
+using FinBot.Maintenance.Abstractions;
+using FinBot.Maintenance.Jobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -43,10 +46,13 @@ namespace FinBot
             services.AddScoped<ICommandBot, CommandService>();
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
 
+            
 
             services
                 .AddControllers()
                 .AddNewtonsoftJson();
+
+            services.AddHostedService<UserTaskReminderJobs>();
         }
 
 

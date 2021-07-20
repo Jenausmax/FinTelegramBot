@@ -27,6 +27,7 @@ namespace FinBot.App.Phrases
         internal static string ConsumptionCategory = "Consumption category";
         internal static string EnterTheAmount = "Enter the amount";
         internal static string SumAddingError = "Sum adding error";
+        public static string Reminder = "Не забудь вписать свои траты!";
 
         /// <summary>
         /// Полное командное меню для чата.
@@ -36,9 +37,8 @@ namespace FinBot.App.Phrases
         {
             var start = new List<string>()
             {
-                
-                "Income",
                 "Consumption",
+                "Income",
                 "Balance",
                 "Menu"
             };

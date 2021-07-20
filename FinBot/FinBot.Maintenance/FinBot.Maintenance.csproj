@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FinBot.App\FinBot.App.csproj" />
-    <ProjectReference Include="..\FinBot\FinBot.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

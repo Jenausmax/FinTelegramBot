@@ -51,6 +51,7 @@ namespace FinBot.App.Services
         public async Task SetUpdateBot(Update update)
         {
             _update = update;
+            CurrentUpdate.Update = update;
         }
 
         public async Task SetCommandBot(Telegram.Bot.Types.Enums.UpdateType type)
