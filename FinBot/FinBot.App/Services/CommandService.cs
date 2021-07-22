@@ -341,7 +341,7 @@ namespace FinBot.App.Services
                 entity.Role = CategoryRole.Income;
                 entity.Name = text + "(Inc)";
                 var categoryIncomes = await _categoryDb.GetCollection(cancel);
-                var inc = categoryIncomes.FirstOrDefault(e => e.Name == text && 
+                var inc = categoryIncomes.FirstOrDefault(e => e.Name == entity.Name && 
                                                               e.IsDelete == false && 
                                                               e.Role == entity.Role);
                 if (inc == null)
@@ -360,7 +360,7 @@ namespace FinBot.App.Services
                entity.Role = CategoryRole.Consumption;
                entity.Name = text + "(Con)";
                var categoryConsumptions = await _categoryDb.GetCollection(cancel);
-               var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == text && 
+               var consumption = categoryConsumptions.FirstOrDefault(e => e.Name == entity.Name && 
                                                                           e.IsDelete == false && 
                                                                           e.Role == entity.Role);
                if (consumption == null)
@@ -446,7 +446,7 @@ namespace FinBot.App.Services
         private async void ParseCallbackInputText(string response)
         {
             var categories = await _categoryDb.GetCollection();
-            var category = categories.FirstOrDefault(e => e.Name == response);
+            var category = categories.Where(e => e.Name == response).FirstOrDefault(i => i.IsDelete == false);
             if (category is not null)
             {
                 if (_flagRemoveCategory)
